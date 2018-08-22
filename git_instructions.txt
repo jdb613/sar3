@@ -1,0 +1,6 @@
+#git init
+#pip freeze requirements.txt
+#git remote add origin https://github.com/bigperm10011/[projectname.py]
+#git add .
+#git commit -m '[comments]'
+#git push -u origin master
