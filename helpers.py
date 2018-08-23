@@ -73,6 +73,7 @@ def processfile(file):
 #adds NEW leavers to database from pandas df
 def pd2class(row):
     number = concat(row['prosshell#'], row['proscontact#'])
+    number = int(number)
     exists = Leaver.query.filter_by(prosnum=number).first()
     if exists:
         exists.inprosshell = 'Yes'
