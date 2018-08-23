@@ -232,12 +232,21 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        fname = form.firstname.data + ' ' + form.lastname.data
-        newsrep = Srep(name=fname, email=form.email.data, repcode=form.repcode.data, teamcode=form.teamcode.data)
-        db.session.add(newsrep)
-        db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    regform = RegistrationForm()
+
+    if request.method == 'POST':
+        print(regform.errors)
+        print(regform.validate_on_submit())
+        print('post')
+        print(regform.firstname.data)
+        if regform.validate_on_submit():
+            print('valid form')
+            fname = regform.firstname.data + ' ' + regform.lastname.data
+            print(fname)
+            newsrep = Srep(name=fname, email=regform.email.data, repcode=regform.repcode.data, teamcode=regform.teamcode.data)
+            print('name: ', newsrep.name)
+            db.session.add(newsrep)
+            db.session.commit()
+            flash('Congratulations, you are now a registered user!')
+            return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=regform)
