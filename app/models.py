@@ -19,7 +19,7 @@ class Leaver(db.Model):
     name = db.Column(db.String(100))
     prosrole = db.Column(db.String(100))
     prosfirm = db.Column(db.String(100))
-    prosnum = db.Column(db.Integer)
+    prosnum = db.Column(db.BigInteger)
     repcode = db.Column(db.String(10), db.ForeignKey('srep.repcode'))
     teamcode = db.Column(db.String(10))
     datetimeadded = db.Column(db.DateTime, index=True, default=datetime.utcnow)
