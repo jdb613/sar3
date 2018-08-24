@@ -101,6 +101,9 @@ def upload():
         rez = processfile(f)
         if rez == "Success" and prosu == 'Success':
             return redirect(url_for('match'))
+        else:
+            flash('Excel Upload Failed. Please Check Fields.')
+            return redirect(url_for('upload'))
 
     return render_template('upload.html', title='Upload XLSX File')
 

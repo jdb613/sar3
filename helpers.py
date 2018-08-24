@@ -63,12 +63,16 @@ def concat(a, b):
 #translates excel file to pandas df passing rows to pd2class
 def processfile(file):
     data_xls = pd.read_excel(file)
-    data_xls["name"] = data_xls["first"] + ' ' + data_xls["last"]
-    data_xls = data_xls.drop('first', 1)
-    data_xls= data_xls.drop('last', 1)
-    data_xls.fillna(' ', inplace=True)
-    data_xls.apply(pd2class, axis=1)
-    return 'Success'
+    try:
+        data_xls["name"] = data_xls["first"] + ' ' + data_xls["last"]
+        data_xls = data_xls.drop('first', 1)
+        data_xls= data_xls.drop('last', 1)
+        data_xls.fillna(' ', inplace=True)
+        data_xls.apply(pd2class, axis=1)
+        return 'Success'
+    except:
+        print('Failed to Read SpreadSheet. Please Check Columns')
+        return 'Fail'
 
 #adds NEW leavers to database from pandas df
 def pd2class(row):
