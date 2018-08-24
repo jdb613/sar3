@@ -25,7 +25,7 @@ def proslinkgen(num):
     return link
 
 def actionfill():
-    actioned = Leaver.query.filter_by(result='Changed', repcode=current_user.repcode).all()
+    actioned = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
     parentdict = {}
     placed_dict = {}
     placed_list = []
