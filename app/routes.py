@@ -208,7 +208,7 @@ def removeclick():
     for s in suspects:
         s_dict = {'ident': s.id, 'name': s.name, 'link': s.slink, 'role': s.srole, 'firm':s.sfirm, 'location': s.slocation}
         suspect_dict.append(s_dict)
-        return json.dumps(suspect_dict)
+    return json.dumps(suspect_dict)
 
 
 
