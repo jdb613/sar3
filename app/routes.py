@@ -156,10 +156,10 @@ def trackclick():
     print('confirming suspect ident match: ', hit.name)
     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
     print('confirming leaver suspect match: ', lhit.name)
-    lhit.trackrole = hit.srole
-    lhit.trackfirm = hit.sfirm
+    lhit.leaverrole = hit.srole
+    lhit.leaverfirm = hit.sfirm
     lhit.link = hit.slink
-    lhit.tracklocation = hit.slocation
+    lhit.leaverlocation = hit.slocation
     lhit.result = 'Tracking'
     hit.result = 'Selected'
     hit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
