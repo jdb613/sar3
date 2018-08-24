@@ -53,7 +53,6 @@ def inpros():
     existnames = Leaver.query.filter_by(result='Lost').all()
     for n in existnames:
         n.inprosshell = 'No'
-    db.session.commit()
     return 'Success'
 
 #adds pros shell and pros contact numbers together
@@ -72,7 +71,7 @@ def processfile(file):
         return 'Success'
     except:
         print('Failed to Read SpreadSheet. Please Check Columns')
-        return 'Fail'
+        return 'Failure'
 
 #adds NEW leavers to database from pandas df
 def pd2class(row):

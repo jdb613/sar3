@@ -100,9 +100,11 @@ def upload():
         prosu = inpros()
         rez = processfile(f)
         if rez == "Success" and prosu == 'Success':
+            db.session.commit()
             return redirect(url_for('match'))
         else:
             flash('Excel Upload Failed. Please Check Fields.')
+            db.session.rollback()
             return redirect(url_for('upload'))
 
     return render_template('upload.html', title='Upload XLSX File')
