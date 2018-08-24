@@ -151,8 +151,11 @@ def leadclick():
 @login_required
 def trackclick():
     ident = request.args.get( 'data', '', type = int )
+    print('confirming ident capture: ', ident)
     hit = Suspect.query.filter_by(id=ident).first()
+    print('confirming suspect ident match: ', hit.name)
     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
+    print('confirming leaver suspect match: ', lhit.name)
     lhit.trackrole = hit.srole
     lhit.trackfirm = hit.sfirm
     lhit.link = hit.slink
@@ -162,7 +165,7 @@ def trackclick():
     hit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
     db.session.commit()
 
-
+    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
     leaver_dict = fillselect(leavers)
 
     return json.dumps(leaver_dict)
