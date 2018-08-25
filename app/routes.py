@@ -148,7 +148,7 @@ def leadclick():
     #.isoformat()
     db.session.commit()
 
-    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result=None).all()
+    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
     leaver_dict = fillselect(leavers)
     return json.dumps(leaver_dict)
 
@@ -185,10 +185,10 @@ def placeclick():
     lhit.leaverfirm = hit.sfirm
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
-    lhit.status = 'Placed'
+    lhit.result = 'Placed'
     db.session.commit()
 
-    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost').all()
+    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
     leaver_dict = fillselect(leavers)
     return json.dumps(leaver_dict)
 
