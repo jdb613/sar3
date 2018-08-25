@@ -34,6 +34,7 @@ class Leaver(db.Model):
     trackfirm = db.Column(db.String(100))
     tracklocation = db.Column(db.String(100))
     lasttracked = db.Column(db.DateTime, index=True)
+    suspectcheck = db.Column(db.DateTime, index=True)
     suspects = db.relationship('Suspect', backref='leaver', lazy='dynamic')
 
     def __repr__(self):
