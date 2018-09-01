@@ -141,6 +141,7 @@ def leadclick():
     lhit.leaverfirm = hit.sfirm
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
+    lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
     lhit.result = 'Lead'
     lhit.inprosshell = 'No'
     hit.result = 'Selected'
@@ -185,13 +186,31 @@ def placeclick():
     lhit.leaverfirm = hit.sfirm
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
-    lhit.result = 'Placed'
+    lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
+    lhit.result = 'User Placed'
     db.session.commit()
 
     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
     leaver_dict = fillselect(leavers)
     return json.dumps(leaver_dict)
 
+@app.route('/repclick', methods=['GET', 'POST'])
+@login_required
+def repclick():
+    ident = request.args.get( 'data', '', type = int )
+    hit = Suspect.query.filter_by(id=ident).first()
+    lhit = Leaver.query.filter_by(id=hit.leaverid).first()
+    lhit.leaverrole = hit.srole
+    lhit.leaverfirm = hit.sfirm
+    lhit.link = hit.slink
+    lhit.leaverlocation = hit.slocation
+    lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
+    lhit.result = 'Rep Placed'
+    db.session.commit()
+
+    leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
+    leaver_dict = fillselect(leavers)
+    return json.dumps(leaver_dict)
 #deletes suspect from possible matches for a given leaver
 @app.route('/removeclick', methods=['GET', 'POST'])
 @login_required
