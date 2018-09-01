@@ -125,7 +125,7 @@
                var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
 
           $.getJSON( '/placeclick', { 'data' : col1 } , function( response ) {
-            $.bootstrapGrowl("Leaver Placed", {
+            $.bootstrapGrowl("You Will Move the Leader and Tag with SAR", {
                 ele: 'body',
                 type: 'success',
                 offset: {from: 'top', amount: 20},
@@ -197,7 +197,7 @@
                           + response[f]['role'] + '</td><td>'
                           + response[f]['firm'] + '</td><td>'
                           + response[f]['location'] + '</td><td><a target="_blank" href="'
-                          + response[f]['link'] + ' ">LinkedIn</a></td><td><button class="btnSelect1">Lead</button><button class="btnSelect2">Track</button><button class="btnSelect3">Place</button><button class="btnSelect4">Remove</button></td></tr>';
+                          + response[f]['link'] + ' ">LinkedIn</a></td><td><button class="btnSelect1">Lead</button><button class="btnSelect2">Track</button><button class="btnSelect3">I Placed</button><button class="btnSelect5">Rep Placed</button><button class="btnSelect4">Remove</button></td></tr>';
                   }
                   trHTML += '</tbody>';
                   console.log(trHTML);
