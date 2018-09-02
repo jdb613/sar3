@@ -55,6 +55,8 @@ def actionfill(flag):
             TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
         parentdict['B'] = TA_list
+        DROP_dict = {}
+        DROP_list = []
         for d in DROP_Confirm:
             num = d.prosnum
             link = proslinkgen(num)
