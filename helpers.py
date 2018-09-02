@@ -24,15 +24,44 @@ def proslinkgen(num):
     link = 'PROS C ' + fnum + ' ' + snum
     return link
 
-def actionfill():
-    actioned = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
+def actionfill(flag):
     parentdict = {}
-    placed_dict = {}
-    placed_list = []
-    for l in actioned:
-        placed_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link}
-        placed_list.append(placed_dict)
-    parentdict['B'] = placed_list
+    if flag == 'B':
+        TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
+        TA_dict = {}
+        TA_list = []
+        for l in TA_Confirm:
+            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
+            TA_list.append(TA_dict)
+        parentdict['B'] = TA_list
+
+    elif flag == 'A':
+        DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
+        DROP_dict = {}
+        DROP_list = []
+        for d in DROP_Confirm:
+            num = d.prosnum
+            link = proslinkgen(num)
+            DROP_dict = {'leavername': l.name, 'prosfirm': l.prosfirm, 'prosrole': l.prosrole, 'leaverid': l.id, 'proslink': link}
+            DROP_list.append(DROP_dict)
+        parentdict['A'] = DROP_list
+
+    elif flag == 'AB':
+        TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
+        DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
+        TA_dict = {}
+        TA_list = []
+        for l in TA_Confirm:
+            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
+            TA_list.append(TA_dict)
+        parentdict['B'] = TA_list
+        for d in DROP_Confirm:
+            num = d.prosnum
+            link = proslinkgen(num)
+            DROP_dict = {'leavername': l.name, 'prosfirm': l.prosfirm, 'prosrole': l.prosrole, 'leaverid': l.id, 'proslink': link}
+            DROP_list.append(DROP_dict)
+        parentdict['A'] = DROP_list
+
     return parentdict
 
 def dropfill():
@@ -47,6 +76,28 @@ def dropfill():
         placed_list.append(placed_dict)
     parentdict['B'] = placed_list
     return parentdict
+
+def reset_leaver(id):
+    lvr_id = int(id)
+    reset_lvr = Leaver.query.filter_by(id=lvr_id).first()
+    reset_suspects = Suspect.query.filter_by(leaverid=lvr_id).all()
+    reset_lvr.result = 'Lost'
+    reset_lvr.leaverrole = None
+    reset_lvr.leaverfirm = None
+    reset_lvr.leaverlocation = None
+    reset_lvr.link = None
+    reset_lvr.trackrole = None
+    reset_lvr.trackfirm = None
+    reset_lvr.tracklocation = None
+    reset_lvr.lasttracked = None
+    reset_lvr.datetimeresult = None
+    reset_lvr.suspectcheck = None
+    for s in reset_suspects:
+        s.datetimeresult = None
+        s.result = None
+    db.session.commit()
+    return 'Success'
+
 ######## UPLOAD HELPERS ##############
 #sets the inpros flag in db to NO to detect those No longer in the LJFT bucket
 def inpros():

@@ -5,7 +5,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Leaver, Suspect, Srep
 from sqlalchemy import DateTime
 from werkzeug.urls import url_parse
-from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result
+from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver
 import datetime
 
 @app.route('/')
@@ -19,15 +19,8 @@ def index():
 @app.route('/actionitems', methods=['GET', 'POST'])
 @login_required
 def actionitems():
-    action_dict = actionfill()
+    action_dict = actionfill('AB')
     return json.dumps(action_dict)
-
-#populates initial table on homepage
-@app.route('/dropitems', methods=['GET', 'POST'])
-@login_required
-def dropitems():
-    drop_dict = dropfill()
-    return json.dumps(drop_dict)
 
 #homepage 'Confirm' button posts here after user updates 'placed' users in PROS
 @app.route('/confirm', methods=['GET', 'POST'])
@@ -40,51 +33,48 @@ def confirm():
         updated = Leaver.query.filter_by(id=iprosid).first()
         db = result(updated, 'result', action_type, 'Y')
         print('DB Addition Result: ', db)
-        placed_dict = actionfill()
+        placed_dict = actionfill('B')
         return json.dumps(placed_dict)
-    elif action_type == 'Placed':
-        iprosid = int(prosid)
-        updated = Leaver.query.filter_by(id=iprosid).first()
-        db = result(updated, 'result', action_type, 'Y')
-        print('DB Addition Result: ', db)
-        placed_dict = actionfill()
-        return json.dumps(placed_dict)
-    elif action_type == 'Left_Industry':
-        iprosid = int(prosid)
-        updated = Leaver.query.filter_by(id=iprosid).first()
-        db = result(updated, 'result', action_type, 'Y')
-        print('DB Addition Result: ', db)
-        placed_dict = actionfill()
+    elif action_type == 'Reset':
+        reset_result = reset_leaver(prosid)
+        print('Reset Leaver Result: ', reset_result)
+        placed_dict = actionfill('B')
         return json.dumps(placed_dict)
     else:
-        placed_dict = actionfill()
+        placed_dict = actionfill('AB')
         return json.dumps(placed_dict)
 
-@app.route('/cleanup', methods=['GET', 'POST'])
+@app.route('/dropclick', methods=['GET', 'POST'])
 @login_required
-def cleanup():
+def dropclick():
     prosid = request.args.get( 'data', '', type = int )
     action_type = request.args.get( 'action', '')
-    if action_type == 'Placed':
+    if action_type == 'REPMoveN':
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
-        db = result(updated, 'result', action_type, 'Y')
+        db = result(updated, 'result', 'New Rep Moved, NoTerminal', 'Y')
         print('DB Addition Result: ', db)
-        placed_dict = dropfill()
+        placed_dict = actionfill('A')
         return json.dumps(placed_dict)
-    elif action_type == 'Left_Industry':
+    elif action_type == 'REPMoveY':
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
-        db = result(updated, 'result', action_type, 'Y')
+        db = result(updated, 'result', 'New Rep Moved, HasTerminal', 'Y')
         print('DB Addition Result: ', db)
-        placed_dict = dropfill()
+        placed_dict = actionfill('A')
         return json.dumps(placed_dict)
     elif action_type == 'Inactive':
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
-        db = result(updated, 'result', action_type, 'Y')
+        db = result(updated, 'result', 'Inactive', 'Y')
         print('DB Addition Result: ', db)
-        placed_dict = dropfill()
+        placed_dict = actionfill('A')
+        return json.dumps(placed_dict)
+    elif action_type == 'Reset':
+        iprosid = int(prosid)
+        reset_result = reset_leaver(iprosid)
+        print('DB Reset Result: ', reset_result)
+        placed_dict = actionfill('A')
         return json.dumps(placed_dict)
     else:
         print('!Something Went Wrong with cleanup..!')
