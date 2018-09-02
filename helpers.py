@@ -66,7 +66,8 @@ def actionfill(flag):
             DROP_dict = {'leavername': l.name, 'prosfirm': l.prosfirm, 'prosrole': l.prosrole, 'leaverid': l.id, 'proslink': link}
             DROP_list.append(DROP_dict)
         parentdict['A'] = DROP_list
-
+    print('A', parentdict['A'])
+    print('B', parentdict['B'])
     return parentdict
 
 def dropfill():
