@@ -31,6 +31,7 @@ def actionfill(flag):
     TA_dict = {}
     TA_list = []
     if flag == 'B':
+        print('Flag is B')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
         for l in TA_Confirm:
             TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
@@ -38,6 +39,7 @@ def actionfill(flag):
         parentdict['B'] = TA_list
 
     elif flag == 'A':
+        print('Flag is A')
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
         for d in DROP_Confirm:
             num = d.prosnum
@@ -47,6 +49,7 @@ def actionfill(flag):
         parentdict['A'] = DROP_list
 
     elif flag == 'AB':
+        print('Flag is AB')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
         print('Number of TrackAlert Leavers: ', len(TA_Confirm))
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
