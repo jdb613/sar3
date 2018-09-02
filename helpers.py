@@ -63,7 +63,7 @@ def actionfill(flag):
         for d in DROP_Confirm:
             num = d.prosnum
             link = proslinkgen(num)
-            DROP_dict = {'leavername': l.name, 'prosfirm': l.prosfirm, 'prosrole': l.prosrole, 'leaverid': l.id, 'proslink': link}
+            DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': d.link}
             DROP_list.append(DROP_dict)
         parentdict['A'] = DROP_list
     print('A', parentdict['A'])
