@@ -48,7 +48,9 @@ def actionfill(flag):
 
     elif flag == 'AB':
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
+        print('Number of TrackAlert Leavers: ', len(TA_Confirm))
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
+        print('Number of Dropped Leavers: ', len(DROP_Confirm))
         TA_dict = {}
         TA_list = []
         for l in TA_Confirm:
