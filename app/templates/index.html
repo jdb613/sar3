@@ -243,22 +243,24 @@ $(document).ready(function(){
 });
 </script>
 <h4>Hi, {{ current_user.name }}!</h4>
-<hp>TrackAlerts</p>
-<hp>Changes to LinkedIn Profile Detected While Tracking</p>
+<div>
+<h6>TrackAlerts</h6>
+<p>Changes to LinkedIn Profile Detected While Tracking</p>
 <p>TAG if lead entered: <b>leaverslead</b></p>
-
+</div>
 <br>
 <div>
   <table id="LEADtable" class="table table-hover table-dark">
 
         </table>
   </div>
-
-<hp>Leavers Dropped</p>
-<hp>The Users Below are NO LONGER in the LJFT Shell.</p>
+<div>
+<h6>Leavers Dropped</h6>
+<p>The Users Below are NO LONGER in the LJFT Shell.</p>
   <div>
     <table id="DROPtable" class="table table-hover table-dark">
 
           </table>
     </div>
+</div>
 {% endblock %}
