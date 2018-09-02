@@ -21,6 +21,9 @@ $(document).ready(function(){
                   + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button></td><td><button class="Reset">Reset</button></td></tr>';
           }
           trHTML += '</tbody>';
+          console.log(trHTML);
+          $('#LEADtable').html(trHTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
       for(var g=0;g<response.A.length;g++) {
         console.log(g);
         drHTML += '<tr><td>'
@@ -31,9 +34,7 @@ $(document).ready(function(){
                 + response.A[g].proslink + '</td><td><button class="REPMoveN">NewRep Moved NoTerm</button><button class="REPMoveY">NewRep Moved HasTerm</button><button class="Inactive">Inactive</button><button class="Reset">Reset</button></td></tr>';
               }
           drHTML += '</tbody>';
-          console.log(trHTML);
           console.log(drHTML);
-          $('#LEADtable').html(trHTML);
           $('#DROPtable').html(drHTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
           });
@@ -242,7 +243,6 @@ $(document).ready(function(){
 });
 </script>
 <h4>Hi, {{ current_user.name }}!</h4>
-
 <hp>TrackAlerts</p>
 <hp>Changes to LinkedIn Profile Detected While Tracking</p>
 <p>TAG if lead entered: <b>leaverslead</b></p>

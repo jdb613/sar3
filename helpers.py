@@ -26,10 +26,12 @@ def proslinkgen(num):
 
 def actionfill(flag):
     parentdict = {}
+    DROP_dict = {}
+    DROP_list = []
+    TA_dict = {}
+    TA_list = []
     if flag == 'B':
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
-        TA_dict = {}
-        TA_list = []
         for l in TA_Confirm:
             TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
@@ -37,8 +39,6 @@ def actionfill(flag):
 
     elif flag == 'A':
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
-        DROP_dict = {}
-        DROP_list = []
         for d in DROP_Confirm:
             num = d.prosnum
             link = proslinkgen(num)
@@ -51,14 +51,12 @@ def actionfill(flag):
         print('Number of TrackAlert Leavers: ', len(TA_Confirm))
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
         print('Number of Dropped Leavers: ', len(DROP_Confirm))
-        TA_dict = {}
-        TA_list = []
+        for i in DROP_Confirm:
+            print('DropConfirm Name: ', i.name)
         for l in TA_Confirm:
             TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'lasttracked': l.lasttracked, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
         parentdict['B'] = TA_list
-        DROP_dict = {}
-        DROP_list = []
         for d in DROP_Confirm:
             num = d.prosnum
             link = proslinkgen(num)
