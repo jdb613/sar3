@@ -1,12 +1,17 @@
 from flask import render_template, flash, redirect, url_for, request, json, Flask, jsonify, make_response
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, BokehForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Leaver, Suspect, Srep
 from sqlalchemy import DateTime
 from werkzeug.urls import url_parse
 from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver
 import datetime
+import pandas as pd
+from bokeh.plotting import figure, curdoc
+from bokeh.models import Select, ColumnDataSource
+from bokeh.layouts import row, widgetbox
+from bokeh.palettes import brewer
 
 @app.route('/')
 @app.route('/index')
@@ -224,7 +229,19 @@ def removeclick():
         suspect_dict.append(s_dict)
     return json.dumps(suspect_dict)
 
+@app.route('/bokeh', methods=['GET', 'POST'])
+def bokeh():
+    form = BokehForm()
+    if request.method == 'POST':
+        leavers = Leaver.query.all()
+        df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
+                  columns=['name', 'result', 'id'])
+        print(df.head())
+        source = ColumnDataSource(df)
+        plot = figure()
+        plot.circle(x="name",y="result",source = source)
 
+    return render_template('bokeh.html', title='Bokeh', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

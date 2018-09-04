@@ -17,3 +17,6 @@ class RegistrationForm(FlaskForm):
     repcode= StringField('RepCode', validators=[DataRequired()])
     teamcode = StringField('TeamCode', validators=[DataRequired()])
     submit = SubmitField('Register')
+
+class BokehForm(FlaskForm):
+    submit = SubmitField('Bokeh Test')
