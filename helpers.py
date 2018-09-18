@@ -31,6 +31,8 @@ def result(target, field, rez, flag):
         target.result = rez
     if flag == 'Y':
         target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
+    else:
+        target.link = flag
     db.session.commit()
     return 'Success'
 

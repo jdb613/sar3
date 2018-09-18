@@ -49,12 +49,26 @@ def confirm():
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
         db = result(updated, 'result', action_type, 'Y')
-        print('DB Addition Result: ', db)
+        print('Changed Result Field to Lead: ', db)
         placed_dict = actionfill('B')
         return json.dumps(placed_dict)
     elif action_type == 'Reset':
         reset_result = reset_leaver(prosid)
         print('Reset Leaver Result: ', reset_result)
+        placed_dict = actionfill('B')
+        return json.dumps(placed_dict)
+    elif action_type == 'User Placed':
+        iprosid = int(prosid)
+        updated = Leaver.query.filter_by(id=iprosid).first()
+        db = result(updated, 'result', action_type, 'Y')
+        print('Changed Result Field to User Placed: ', db)
+        placed_dict = actionfill('B')
+        return json.dumps(placed_dict)
+    elif action_type == 'Rep Placed':
+        iprosid = int(prosid)
+        updated = Leaver.query.filter_by(id=iprosid).first()
+        db = result(updated, 'result', action_type, 'Y')
+        print('Changed Result Field to User Placed: ', db)
         placed_dict = actionfill('B')
         return json.dumps(placed_dict)
     else:
@@ -66,6 +80,10 @@ def confirm():
 def dropclick():
     prosid = request.args.get( 'data', '', type = int )
     action_type = request.args.get( 'action', '')
+    try:
+        mlink = request.args.get( 'lnk', '')
+    except:
+        pass
     if action_type == 'REPMoveN':
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
@@ -78,6 +96,13 @@ def dropclick():
         updated = Leaver.query.filter_by(id=iprosid).first()
         db = result(updated, 'result', 'New Rep Moved, HasTerminal', 'Y')
         print('DB Addition Result: ', db)
+        placed_dict = actionfill('A')
+        return json.dumps(placed_dict)
+    elif action_type == 'mtrack':
+        iprosid = int(prosid)
+        updated = Leaver.query.filter_by(id=iprosid).first()
+        db = result(updated, 'result', 'Tracking', mlink)
+        print('Manually Tracking: ', mlink)
         placed_dict = actionfill('A')
         return json.dumps(placed_dict)
     elif action_type == 'Inactive':
