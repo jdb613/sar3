@@ -33,6 +33,7 @@ def result(target, field, rez, flag):
         target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
     else:
         target.link = flag
+        target.trackend = datetime.datetime.now(datetime.timezone.utc)
     db.session.commit()
     return 'Success'
 

@@ -199,6 +199,7 @@ def trackclick():
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
     lhit.result = 'Tracking'
+    lhit.trackstart = datetime.datetime.now(datetime.timezone.utc)
     hit.result = 'Selected'
     hit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
     db.session.commit()
