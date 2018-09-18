@@ -5,13 +5,24 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Leaver, Suspect, Srep
 from sqlalchemy import DateTime
 from werkzeug.urls import url_parse
-from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver
+from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver, create_figure
 import datetime
 import pandas as pd
-from bokeh.plotting import figure, curdoc
-from bokeh.models import Select, ColumnDataSource
-from bokeh.layouts import row, widgetbox
-from bokeh.palettes import brewer
+from collections import Counter
+from math import pi
+import pandas as pd
+from bokeh.io import output_file, show
+from bokeh.palettes import Category20c
+from bokeh.plotting import figure
+from bokeh.transform import cumsum
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+from bokeh.plotting import figure
+from bokeh.embed import components
+from bokeh.embed import components
+from bokeh.plotting import figure
+from bokeh.resources import INLINE
+from bokeh.util.string import encode_utf8
 
 @app.route('/')
 @app.route('/index')
@@ -229,19 +240,147 @@ def removeclick():
         suspect_dict.append(s_dict)
     return json.dumps(suspect_dict)
 
+
+    # choices = ['result', 'role']
+    # b_selection = request.args.get("b_selection")
+    # if b_selection == None:
+    #     b_selection = "result"
+    #
+    # plot = create_figure(b_selection, 10)
+    # script, div = components(plot)
+    # form = BokehForm()
+    # if request.method == 'POST':
+    #     leavers = Leaver.query.all()
+    #     df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
+    #               columns=['name', 'result', 'id'])
+    #     print(df.head())
+    #     source = ColumnDataSource(df)
+    #     plot = figure()
+    #     plot.circle(x="name",y="result",source = source)
+    #return render_template('bokeh.html')
+
 @app.route('/bokeh', methods=['GET', 'POST'])
 def bokeh():
-    form = BokehForm()
-    if request.method == 'POST':
-        leavers = Leaver.query.all()
-        df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
-                  columns=['name', 'result', 'id'])
-        print(df.head())
-        source = ColumnDataSource(df)
-        plot = figure()
-        plot.circle(x="name",y="result",source = source)
+    title = 'bokeh'
 
-    return render_template('bokeh.html', title='Bokeh', form=form)
+    x = Counter({
+        'United States': 157,
+        'United Kingdom': 93,
+        'Japan': 89,
+        'China': 63,
+        'Germany': 44,
+        'India': 42,
+        'Italy': 40,
+        'Australia': 35,
+        'Brazil': 32,
+        'France': 31,
+        'Taiwan': 31,
+        'Spain': 29
+    })
+    leavers = Leaver.query.all()
+    total_lvr = len(leavers)
+    df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
+              columns=['name', 'result', 'id'])
+    data = df.groupby('result', as_index=False)['name'].count()
+
+    data['angle'] = data['name']/total_lvr * 2*pi
+    data['color'] = Category20c[len(data)]
+
+    p = figure(plot_height=350, title="Pie Chart", toolbar_location=None,
+               tools="hover", tooltips="@result: @name")
+
+    p.wedge(x=0, y=1, radius=0.4,
+            start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+            line_color="white", fill_color='color', legend='result', source=data)
+
+    p.axis.axis_label=None
+    p.axis.visible=False
+    p.grid.grid_line_color = None
+
+    # grab the static resources
+    #js_resources = INLINE.render_js()
+    #css_resources = INLINE.render_css()
+
+    # render template
+    script, div = components(p)
+
+    # colormap = {'setosa': 'red', 'versicolor': 'green', 'virginica': 'blue'}
+    # colors = [colormap[x] for x in flowers['species']]
+    df1 = pd.DataFrame([(d.name, d.result, d.id, d.datetimeadded) for d in leavers],
+              columns=['name', 'result', 'id', 'date'])
+    p1 = figure(title = "Scatter")
+    p1.xaxis.axis_label = 'Date'
+    p1.yaxis.axis_label = 'Result'
+
+    p1.circle(df1["date"], df1["result"],
+         color='navy', fill_alpha=0.2, size=10)
+
+    script1, div1 = components(p1)
+
+    return render_template('bokeh.html', title = title, script = script,
+    div = div, script1 = script1, div1 = div1)
+
+@app.route('/chartgen', methods=['GET', 'POST'])
+def chartgen():
+    # init a basic bar chart:
+    # http://bokeh.pydata.org/en/latest/docs/user_guide/plotting.html#bars
+    fig = figure(plot_width=600, plot_height=600)
+    fig.vbar(
+        x=[1, 2, 3, 4],
+        width=0.5,
+        bottom=0,
+        top=[1.7, 2.2, 4.6, 3.9],
+        color='navy'
+    )
+
+    # grab the static resources
+    js_resources = INLINE.render_js()
+    css_resources = INLINE.render_css()
+
+    # render template
+    script, div = components(fig)
+    html = render_template(
+        'index.html',
+        plot_script=script,
+        plot_div=div,
+        js_resources=js_resources,
+        css_resources=css_resources,
+    )
+    return encode_utf8(html)
+    # leavers = Leaver.query.all()
+    # df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
+    #     columns=['name', 'result', 'id'])
+    # group1 = df.groupby('result', as_index=False)['name'].count()
+    # data = group1.to_dict(orient='list')
+    # buckets = g1['result'].tolist()
+    # output_file("pie.html")
+    #
+
+    #
+    # plot_script, plot_div = components(p)
+    # kwargs = {'plot_script': plot_script, 'plot_div': plot_div}
+    # kwargs['title'] = 'hello'
+    # if request.method == 'GET':
+    #     return render_template('bokeh.html', **kwargs)
+    # source = ColumnDataSource(data=data)
+    #
+    #
+    # #get max possible value of plotted columns with some offset
+    # p = figure(x_range=buckets, y_range=(0, g1[['name']].values.max() + 3),
+    #            plot_height=250, title="Report",
+    #            toolbar_location=None, tools="")
+    #
+    # p.vbar(x=dodge('result', -0.25, range=p.x_range), top='name', width=0.4, source=source,
+    #        color="#c9d9d3", legend=value("count"))
+    #
+    #
+    # p.x_range.range_padding = 0.1
+    # p.xgrid.grid_line_color = None
+    # p.legend.location = "top_left"
+    # p.legend.orientation = "horizontal"
+
+    #return encode_utf8(html)
+
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -5,6 +5,25 @@ from app import db
 import os
 import datetime
 from flask_login import current_user
+import bokeh.plotting
+from bokeh.embed import components
+
+######## Bokeh ##############
+def create_figure(b_selection, bins):
+    leavers = Leaver.query.all()
+    df = pd.DataFrame([(d.name, d.result, d.id) for d in leavers],
+        columns=['name', 'result', 'id'])
+    df = df.groupby('result')['name'].count()
+    p = Histogram(df, b_selection, title='Leaver Groups', color='Species',
+        bins=bins, legend='top_right', width=600, height=400)
+
+        # Set the x axis label
+    p.xaxis.axis_label = b_selection
+
+    # Set the y axis label
+    p.yaxis.axis_label = 'Count'
+    return p
+
 
 ######## Utilities ##############
 def result(target, field, rez, flag):
@@ -66,8 +85,7 @@ def actionfill(flag):
             DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': d.prosnum}
             DROP_list.append(DROP_dict)
         parentdict['A'] = DROP_list
-    print('A', parentdict['A'])
-    print('B', parentdict['B'])
+
     return parentdict
 
 def dropfill():
