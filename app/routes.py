@@ -334,7 +334,8 @@ def bokeh():
     # colors = [colormap[x] for x in flowers['species']]
     df1 = pd.DataFrame([(d.name, d.result, d.id, d.datetimeadded) for d in leavers],
               columns=['name', 'result', 'id', 'date'])
-    p1 = figure(title = "Scatter")
+    df1['date'] = pd.to_datetime(df1['date'])
+    p1 = figure(title = "Scatter", x_axis_type="datetime")
     p1.xaxis.axis_label = 'Date'
     p1.yaxis.axis_label = 'Result'
 
@@ -343,8 +344,7 @@ def bokeh():
 
     script1, div1 = components(p1)
 
-    return render_template('bokeh.html', title = title, script = script,
-    div = div, script1 = script1, div1 = div1)
+    return render_template('bokeh.html', title = title, script = script, div = div, script1 = script1, div1 = div1)
 
 @app.route('/chartgen', methods=['GET', 'POST'])
 def chartgen():

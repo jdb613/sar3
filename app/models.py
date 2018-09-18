@@ -36,6 +36,9 @@ class Leaver(db.Model):
     lasttracked = db.Column(db.DateTime, index=True)
     suspectcheck = db.Column(db.DateTime, index=True)
     suspects = db.relationship('Suspect', backref='leaver', lazy='dynamic')
+    trackstart = db.Column(db.DateTime, index=True)
+    trackend = db.Column(db.DateTime, index=True)
+    outprosshell = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
         return '<Leaver {}>'.format(self.name)
@@ -55,6 +58,25 @@ class Suspect(db.Model):
     def __repr__(self):
         return '<Leaver {}>'.format(self.name)
 
+class Buckets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(50), index=True)
+    count = db.Column(db.Integer, index=True)
+    team = db.Column(db.String(20), index=True)
+    date = db.Column(db.DateTime, index=True)
+
+    def __repr__(self):
+        return '<Bucket {}>'.format(self.name)
+
+class LJFT(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(10), index=True)
+    count = db.Column(db.Integer, index=True)
+    team = db.Column(db.String(20), index=True)
+    date = db.Column(db.DateTime, index=True)
+
+    def __repr__(self):
+        return '<LJFT {}>'.format(self.name)
 
 @login.user_loader
 def load_user(id):
