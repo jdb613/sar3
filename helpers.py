@@ -119,6 +119,7 @@ def reset_leaver(id):
     reset_lvr.lasttracked = None
     reset_lvr.datetimeresult = None
     reset_lvr.suspectcheck = None
+    reset_lvr.trackend = None
     for s in reset_suspects:
         s.datetimeresult = None
         s.result = None
@@ -166,7 +167,13 @@ def pd2class(row):
         db.session.add(l)
         db.session.commit()
 
-
+def exitpros():
+    newdrop = Leaver.query.filter_by(inprosshell='No').all()
+    for n in newdrop:
+        if n.outprosshell == None:
+            n.outprosshell = datetime.datetime.now(datetime.timezone.utc)
+    db.session.commit()
+    return 'Success'
 ####### Match HELPERS ############
 #populates the dropdown on track page with leavers. selection triggers tablefill
 def fillselect(leavers):

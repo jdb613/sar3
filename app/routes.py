@@ -5,7 +5,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Leaver, Suspect, Srep
 from sqlalchemy import DateTime
 from werkzeug.urls import url_parse
-from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver, create_figure
+from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver, create_figure, exitpros
 import datetime
 import pandas as pd
 from collections import Counter
@@ -133,6 +133,8 @@ def upload():
         rez = processfile(f)
         if rez == "Success" and prosu == 'Success':
             db.session.commit()
+            exit = exitpros()
+            print('Status of outprosshell update: ', exit)
             return redirect(url_for('match'))
         else:
             flash('Excel Upload Failed. Please Check Fields.')
