@@ -44,6 +44,7 @@ def actionitems():
 def confirm():
     prosid = request.args.get( 'data', '', type = int )
     action_type = request.args.get( 'action', '')
+    print('Action Type Sent to Confirm Route: ', action_type)
     if action_type == 'Lead':
         iprosid = int(prosid)
         updated = Leaver.query.filter_by(id=iprosid).first()
