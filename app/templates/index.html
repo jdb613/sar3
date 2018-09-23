@@ -5,35 +5,11 @@
 $(document).ready(function(){
     $.getJSON( '/actionitems', function( response ) {
       console.log(response);
-      var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Old Role</th><th>New Role</th><th>Old Firm</th><th>New Firm</th><th>Location</th><th>Link</th><th>Last Checked</th><th>Actions</th></tr></thead><tbody>';
-      var drHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-      for(var f=0;f<response.B.length;f++) {
-        console.log(f);
-        trHTML += '<tr><td>'
-                  + response.B[f].leaverid + '</td><td>'
-                  + response.B[f].leavername + '</td><td>'
-                  + response.B[f].leaverrole + '</td><td>'
-                  + response.B[f].trackrole + '</td><td>'
-                  + response.B[f].leaverfirm + '</td><td>'
-                  + response.B[f].trackfirm + '</td><td>'
-                  + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                  + response.B[f].leaverlink + ' ">LinkedIn</a></td><td>"'
-                  + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button><button class="iPlace">I Moved</button><button class="uPlace">Rep Moved</button><button class="Reset">Reset</button></td></tr>';
-          }
-          trHTML += '</tbody>';
+      var trHTML = response.B
+      var drHTML = response.A
           console.log(trHTML);
           $('#LEADtable').html(trHTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
-      for(var f=0;f<response.A.length;f++) {
-        console.log(f);
-        drHTML += '<tr><td>'
-                + response.A[f].leaverid + '</td><td>'
-                + response.A[f].leavername + '</td><td>'
-                + response.A[f].prosrole + '</td><td>'
-                + response.A[f].prosfirm + '</td><td>'
-                + response.A[f].proslink + '</td><td><button class="REPMoveN">NewRep Moved NoTerm</button><button class="REPMoveY">NewRep Moved HasTerm</button><button class="mtrack">Manual Track</button><button class="Inactive">Inactive</button><button class="Reset">Reset</button></td></tr>';
-              }
-          drHTML += '</tbody>';
           console.log(drHTML);
           $('#DROPtable').html(drHTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -41,7 +17,7 @@ $(document).ready(function(){
 
 
     // user clicks confirm in table once they update users PROS record with new job info
-    $("#LEADtable").on('click','.Lead',function(){
+    $("#LEADtable").on('click','.lead',function(){
          // get the current row
          var currentRow=$(this).closest("tr");
 
@@ -56,21 +32,7 @@ $(document).ready(function(){
                align: 'right'
              });
              $('#Leadtable').find('td').remove();
-             var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Old Role</th><th>New Role</th><th>Old Firm</th><th>New Firm</th><th>Location</th><th>Link</th><th>Last Checked</th><th>Actions</th></tr></thead><tbody>';
-             for(var f=0;f<response.B.length;f++) {
-               console.log(f);
-               trHTML += '<tr><td>'
-                         + response.B[f].leaverid + '</td><td>'
-                         + response.B[f].leavername + '</td><td>'
-                         + response.B[f].leaverrole + '</td><td>'
-                         + response.B[f].trackrole + '</td><td>'
-                         + response.B[f].leaverfirm + '</td><td>'
-                         + response.B[f].trackfirm + '</td><td>'
-                         + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                         + response.B[f].leaverlink + ' ">LinkedIn</a></td><td>"'
-                         + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button><button class="iPlace">I Moved</button><button class="uPlace">Rep Moved</button><button class="Reset">Reset</button></td></tr>';
-                 }
-                 trHTML += '</tbody>';
+             var trHTML = response.B
                  console.log(trHTML);
                  $('#LEADtable').html(trHTML);
                  $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -79,36 +41,22 @@ $(document).ready(function(){
          });
 
 
-         $("#LEADtable").on('click','.iPlace',function(){
+         $("#LEADtable").on('click','.recapture',function(){
               // get the current row
               var currentRow=$(this).closest("tr");
 
               var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
               console.log(id);
 
-              $.getJSON( '/confirm', { 'data' : id, 'action': 'User Placed' } , function( response ) {
-                $.bootstrapGrowl("Thank You for Updating PROS", {
+              $.getJSON( '/confirm', { 'data' : id, 'action': 'Recapture' } , function( response ) {
+                $.bootstrapGrowl("Recapture Confirmed", {
                     ele: 'body',
                     type: 'success',
                     offset: {from: 'top', amount: 20},
                     align: 'right'
                   });
                   $('#LEADtable').find('td').remove();
-                  var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Old Role</th><th>New Role</th><th>Old Firm</th><th>New Firm</th><th>Location</th><th>Link</th><th>Last Checked</th><th>Actions</th></tr></thead><tbody>';
-                  for(var f=0;f<response.B.length;f++) {
-                    console.log(f);
-                    trHTML += '<tr><td>'
-                              + response.B[f].leaverid + '</td><td>'
-                              + response.B[f].leavername + '</td><td>'
-                              + response.B[f].leaverrole + '</td><td>'
-                              + response.B[f].trackrole + '</td><td>'
-                              + response.B[f].leaverfirm + '</td><td>'
-                              + response.B[f].trackfirm + '</td><td>'
-                              + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                              + response.B[f].leaverlink + ' ">LinkedIn</a></td><td>"'
-                              + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button><button class="iPlace">I Moved</button><button class="uPlace">Rep Moved</button><button class="Reset">Reset</button></td></tr>';
-                      }
-                      trHTML += '</tbody>';
+                  var trHTML = response.B
                       console.log(trHTML);
                       $('#LEADtable').html(trHTML);
                       $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -116,36 +64,22 @@ $(document).ready(function(){
                 });
          });
 
-         $("#LEADtable").on('click','.uPlace',function(){
+         $("#LEADtable").on('click','.left',function(){
               // get the current row
               var currentRow=$(this).closest("tr");
 
               var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
               console.log(id);
 
-              $.getJSON( '/confirm', { 'data' : id, 'action': 'Rep Placed' } , function( response ) {
-                $.bootstrapGrowl("Confirmed. New Rep Moved User", {
+              $.getJSON( '/confirm', { 'data' : id, 'action': 'Left' } , function( response ) {
+                $.bootstrapGrowl("Confirmed. User Left Industry", {
                     ele: 'body',
                     type: 'success',
                     offset: {from: 'top', amount: 20},
                     align: 'right'
                   });
                   $('#LEADtable').find('td').remove();
-                  var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Old Role</th><th>New Role</th><th>Old Firm</th><th>New Firm</th><th>Location</th><th>Link</th><th>Last Checked</th><th>Actions</th></tr></thead><tbody>';
-                  for(var f=0;f<response.B.length;f++) {
-                    console.log(f);
-                    trHTML += '<tr><td>'
-                              + response.B[f].leaverid + '</td><td>'
-                              + response.B[f].leavername + '</td><td>'
-                              + response.B[f].leaverrole + '</td><td>'
-                              + response.B[f].trackrole + '</td><td>'
-                              + response.B[f].leaverfirm + '</td><td>'
-                              + response.B[f].trackfirm + '</td><td>'
-                              + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                              + response.B[f].leaverlink + ' ">LinkedIn</a></td><td>"'
-                              + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button><button class="iPlace">I Moved</button><button class="uPlace">Rep Moved</button><button class="Reset">Reset</button></td></tr>';
-                      }
-                      trHTML += '</tbody>';
+                  var trHTML = response.B
                       console.log(trHTML);
                       $('#LEADtable').html(trHTML);
                       $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -154,36 +88,22 @@ $(document).ready(function(){
          });
 
 
-      $("#LEADtable").on('click','.Reset',function(){
+      $("#LEADtable").on('click','.error',function(){
            // get the current row
            var currentRow=$(this).closest("tr");
 
            var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
            console.log(id);
 
-           $.getJSON( '/confirm', { 'data' : id, 'action': 'Reset' } , function( response ) {
-             $.bootstrapGrowl("Clearing Leaver's Information", {
+           $.getJSON( '/confirm', { 'data' : id, 'action': 'Error' } , function( response ) {
+             $.bootstrapGrowl("Resetting User's Information", {
                  ele: 'body',
                  type: 'success',
                  offset: {from: 'top', amount: 20},
                  align: 'right'
                });
                $('#LEADtable').find('td').remove();
-               var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Old Role</th><th>New Role</th><th>Old Firm</th><th>New Firm</th><th>Location</th><th>Link</th><th>Last Checked</th><th>Actions</th></tr></thead><tbody>';
-               for(var f=0;f<response.B.length;f++) {
-                 console.log(f);
-                 trHTML += '<tr><td>'
-                           + response.B[f].leaverid + '</td><td>'
-                           + response.B[f].leavername + '</td><td>'
-                           + response.B[f].leaverrole + '</td><td>'
-                           + response.B[f].trackrole + '</td><td>'
-                           + response.B[f].leaverfirm + '</td><td>'
-                           + response.B[f].trackfirm + '</td><td>'
-                           + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                           + response.B[f].leaverlink + ' ">LinkedIn</a></td><td>"'
-                           + response.B[f].datetimeresult + ' "</td><td><button class="Lead">Confirm Lead</button><button class="iPlace">I Moved</button><button class="uPlace">Rep Moved</button><button class="Reset">Reset</button></td></tr>';
-                   }
-                   trHTML += '</tbody>';
+               var trHTML = response.B
                    console.log(trHTML);
                    $('#LEADtable').html(trHTML);
                    $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -193,63 +113,43 @@ $(document).ready(function(){
       // user clicks confirm in table once they update users PROS record with new job info
       // moved droppedout inactive
 
-      $("#DROPtable").on('click','.REPMoveN',function(){
+      $("#DROPtable").on('click','.recapture',function(){
            // get the current row
            var currentRow=$(this).closest("tr");
 
            var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
            console.log(id);
 
-           $.getJSON( '/dropclick', { 'data' : id, 'action': 'REPMoveN' } , function( response ) {
-             $.bootstrapGrowl("Leaver Moved by NewRep, No Terminal", {
+           $.getJSON( '/dropclick', { 'data' : id, 'action': 'Recapture' } , function( response ) {
+             $.bootstrapGrowl("Recapture Confirmed", {
                  ele: 'body',
                  type: 'success',
                  offset: {from: 'top', amount: 20},
                  align: 'right'
                });
                $('#DROPtable').find('td').remove();
-               var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-               for(var f=0;f<response.A.length;f++) {
-                 console.log(f);
-                 trHTML += '<tr><td>'
-                           + response.A[f].leaverid + '</td><td>'
-                           + response.A[f].leavername + '</td><td>'
-                           + response.A[f].prosrole + '</td><td>'
-                           + response.A[f].prosfirm + '</td><td>'
-                           + response.A[f].proslink + '</td><td><button class="moved">Moved</button><button class="droppedout">Left</button><button class="mtrack">Manual Track</button><button class="inactive">Inactive</button></td></tr>';
-                   }
-                   trHTML += '</tbody>';
+               var trHTML = response.A
                    console.log(trHTML);
                    $('#DROPtable').html(trHTML);
                    $( ".spin-grid" ).removeClass( "fa-spin" );
                    });
            });
-        $("#DROPtable").on('click','.REPMoveY',function(){
+        $("#DROPtable").on('click','.lead',function(){
              // get the current row
              var currentRow=$(this).closest("tr");
 
              var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
              console.log(id);
 
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'REPMoveY' } , function( response ) {
-               $.bootstrapGrowl("Leaver Moved by NewRep, Has Terminal", {
+             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Lead' } , function( response ) {
+               $.bootstrapGrowl("Lead Entry Confirmed", {
                    ele: 'body',
                    type: 'success',
                    offset: {from: 'top', amount: 20},
                    align: 'right'
                  });
                  $('#DROPtable').find('td').remove();
-                 var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-                 for(var f=0;f<response.A.length;f++) {
-                   console.log(f);
-                   trHTML += '<tr><td>'
-                             + response.A[f].leaverid + '</td><td>'
-                             + response.A[f].leavername + '</td><td>'
-                             + response.A[f].prosrole + '</td><td>'
-                             + response.A[f].prosfirm + '</td><td>'
-                             + response.A[f].proslink + '</td><td><button class="moved">Moved</button><button class="droppedout">Left</button><button class="mtrack">Manual Track</button><button class="inactive">Inactive</button></td></tr>';
-                     }
-                     trHTML += '</tbody>';
+                 var trHTML = response.A
                      console.log(trHTML);
                      $('#DROPtable').html(trHTML);
                      $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -271,17 +171,7 @@ $(document).ready(function(){
                    align: 'right'
                  });
                  $('#DROPtable').find('td').remove();
-                 var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-                 for(var f=0;f<response.A.length;f++) {
-                   console.log(f);
-                   trHTML += '<tr><td>'
-                             + response.A[f].leaverid + '</td><td>'
-                             + response.A[f].leavername + '</td><td>'
-                             + response.A[f].prosrole + '</td><td>'
-                             + response.A[f].prosfirm + '</td><td>'
-                             + response.A[f].proslink + '</td><td><button class="moved">Moved</button><button class="droppedout">Left</button><button class="mtrack">Manual Track</button><button class="inactive">Inactive</button></td></tr>';
-                     }
-                     trHTML += '</tbody>';
+                 var trHTML = response.A
                      console.log(trHTML);
                      $('#DROPtable').html(trHTML);
                      $( ".spin-grid" ).removeClass( "fa-spin" );
@@ -290,7 +180,29 @@ $(document).ready(function(){
 
 
 
-        $("#DROPtable").on('click','.Inactive',function(){
+        $("#DROPtable").on('click','.left',function(){
+             // get the current row
+             var currentRow=$(this).closest("tr");
+
+             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+             console.log(id);
+
+             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Left Industry' } , function( response ) {
+               $.bootstrapGrowl("Confirmed User Left Industry", {
+                   ele: 'body',
+                   type: 'success',
+                   offset: {from: 'top', amount: 20},
+                   align: 'right'
+                 });
+                 $('#DROPtable').find('td').remove();
+                 var trHTML = response.A
+                     console.log(trHTML);
+                     $('#DROPtable').html(trHTML);
+                     $( ".spin-grid" ).removeClass( "fa-spin" );
+                     });
+        });
+
+        $("#DROPtable").on('click','.inactive',function(){
              // get the current row
              var currentRow=$(this).closest("tr");
 
@@ -298,76 +210,269 @@ $(document).ready(function(){
              console.log(id);
 
              $.getJSON( '/dropclick', { 'data' : id, 'action': 'Inactive' } , function( response ) {
-               $.bootstrapGrowl("Leaver PROS is Inactive", {
+               $.bootstrapGrowl("Confirmed User is Inactive with No Clear Leads", {
                    ele: 'body',
                    type: 'success',
                    offset: {from: 'top', amount: 20},
                    align: 'right'
                  });
                  $('#DROPtable').find('td').remove();
-                 var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-                 for(var f=0;f<response.A.length;f++) {
-                   console.log(f);
-                   trHTML += '<tr><td>'
-                             + response.A[f].leaverid + '</td><td>'
-                             + response.A[f].leavername + '</td><td>'
-                             + response.A[f].prosrole + '</td><td>'
-                             + response.A[f].prosfirm + '</td><td>'
-                             + response.A[f].proslink + '</td><td><button class="moved">Moved</button><button class="droppedout">Left</button><button class="mtrack">Manual Track</button><button class="inactive">Inactive</button></td></tr>';
-                     }
-                     trHTML += '</tbody>';
+                 var trHTML = response.A
                      console.log(trHTML);
                      $('#DROPtable').html(trHTML);
                      $( ".spin-grid" ).removeClass( "fa-spin" );
                      });
         });
-        $("#DROPtable").on('click','.Reset',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
 
-             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-             console.log(id);
+     //    $(function(){
+     //      $(".dropdown-menu").on('click', 'a', function(){
+     //        var selection = $(this).parents('.dropdown').find('button').text($(this).text());
+     //        var test = $(this).parent().siblings().find("select").val();
+     //        var id = $(this).closest("tr").children().first().html();
+     //        alert(test.text());
+     //        console.log(selection);
+     //        console.log(test);
+     //        console.log(id);
+     //
+     //        $.getJSON( '/dropclick', { 'data' : id, 'action': selection } , function( response ) {
+     //          $.bootstrapGrowl("Confirmed User is Inactive with No Clear Leads", {
+     //              ele: 'body',
+     //              type: 'success',
+     //              offset: {from: 'top', amount: 20},
+     //              align: 'right'
+     //            });
+     //            $('#DROPtable').find('td').remove();
+     //            var trHTML = response.A
+     //                console.log(trHTML);
+     //                $('#DROPtable').html(trHTML);
+     //                $( ".spin-grid" ).removeClass( "fa-spin" );
+     //                });
+     //   });
+     // });
 
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Reset' } , function( response ) {
-               $.bootstrapGrowl("Clearing Leaver's Data to Track Again", {
-                   ele: 'body',
-                   type: 'success',
-                   offset: {from: 'top', amount: 20},
-                   align: 'right'
-                 });
-                 $('#DROPtable').find('td').remove();
-                 var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>PROS Link</th><th>Actions</th></tr></thead><tbody>';
-                 for(var f=0;f<response.A.length;f++) {
-                   console.log(f);
-                   trHTML += '<tr><td>'
-                             + response.A[f].leaverid + '</td><td>'
-                             + response.A[f].leavername + '</td><td>'
-                             + response.A[f].prosrole + '</td><td>'
-                             + response.A[f].prosfirm + '</td><td>'
-                             + response.A[f].proslink + '</td><td><button class="moved">Moved</button><button class="droppedout">Left</button><button class="mtrack">Manual Track</button><button class="inactive">Inactive</button></td></tr>';
-                     }
-                     trHTML += '</tbody>';
-                     console.log(trHTML);
-                     $('#DROPtable').html(trHTML);
-                     $( ".spin-grid" ).removeClass( "fa-spin" );
-                     });
-        });
+     // $(function(){
+     //    $(".LEADtable").on('click', 'li', function(){
+     //        var selection = $(this).parents('.dropdown').find('button').text($(this).text());
+     //        var id = $(this).closest("tr").children().first().html();
+     //        alert(selection.text());
+     //        alert(id);
+     //    });
+     // });
+     $(document).on('click', 'li', function(){
+         var selection = $(this).parents('.dropdown').find('button').text($(this).text());
+
+          if (selection.text() === 'Manual Track') {
+              var link=prompt("Enter LinkedIn Profile Address");
+          }else {
+              var link='';
+            }
+
+         var id = $(this).closest("tr").children().first().html();
+         var table = $(this).closest('table').attr('id')
+
+
+           $.getJSON( '/confirm', { 'id' : id, 'selection': selection.text(), 'table': table, 'link': link } , function( response ) {
+             $.bootstrapGrowl("Selection Confirmed", {
+                 ele: 'body',
+                 type: 'success',
+                 offset: {from: 'top', amount: 20},
+                 align: 'right'
+               });
+               if (table === 'LEADtable') {
+                   $('#LEADtable').find('td').remove();
+                   var trHTML = response.B
+                   $('#LEADtable').html(trHTML);                  
+                   $( ".spin-grid" ).removeClass( "fa-spin" );
+               }else if (table == 'DROPtable') {
+                  $('#DROPtable').find('td').remove();
+                  var trHTML = response.A
+                  $('#DROPtable').html(trHTML);
+                  $( ".spin-grid" ).removeClass( "fa-spin" );
+                }
+               // $('#DROPtable').find('td').remove();
+               // var trHTML = response.A
+               //     console.log(trHTML);
+               //     $('#DROPtable').html(trHTML);
+               //     $( ".spin-grid" ).removeClass( "fa-spin" );
+                   });
+         });
 });
+
+
+    // what you want to happen when mouseover and mouseout
+    // occurs on elements that match '.dosomething'
+
+
+     // $(function(){
+     //   $(".dropdown-select").on('click', 'a', function(){
+     //     var selection = $(this).parents('.dropdown').find('button').text($(this).text());
+     //     var id = $(this).closest("tr").children().first().html();
+     //     // alert(selection.text());
+     //     alert(selection.text());
+     //   });
+     // });
+
 </script>
-<h4>Hi, {{ current_user.name }}!</h4>
+<!-- <table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>
+              <div class="dropdown">
+                <div class="btn-group">
+                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Action<span class="caret"></span></button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                    <li><a class="dropdown-item" href="#">Recapture</a></li>
+                    <li><a class="dropdown-item" href="#">Lead</a></li>
+                    <li><a class="dropdown-item" href="#">Left Industry</a></li>
+                    <li><a class="dropdown-item" href="#">Error</a></li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>
+                <div class="dropdown">
+                  <div class="btn-group">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Action<span class="caret"></span></button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                      <li><a class="dropdown-item" href="#">Item</a></li>
+                      <li><a class="dropdown-item" href="#">Another item</a></li>
+                      <li><a class="dropdown-item" href="#">One more item</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>
+              <div class="dropdown">
+                <div class="btn-group">
+                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Action<span class="caret"></span></button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                    <li><a class="dropdown-item" href="#">Item</a></li>
+                    <li><a class="dropdown-item" href="#">Another item</a></li>
+                    <li><a class="dropdown-item" href="#">One more item</a></li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+        </tr>
+    </tbody>
+</table> -->
+<!-- <table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>
+              <div class="container">
+                <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Action
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Recapture</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Lead</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Left Industry</a></li>
+                    <!-- <li role="presentation" class="divider"></li> -->
+                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Manual Track</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Inactive</a></li>
+                  </ul>
+                </div>
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>
+              <div class="container">
+                <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Dropdown Example
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
+                  </ul>
+                </div><br>
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>
+              <div class="container">
+                <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Dropdown Example
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
+                  </ul>
+                </div><br>
+
+            </div>
+            </td>
+        </tr>
+    </tbody>
+</table> -->
+
+
+<p align="right">Logged In: {{ current_user.name }}</p>
 <div>
-<h6>TrackAlerts</h6>
-<p>Changes to LinkedIn Profile Detected While Tracking</p>
-<p>TAG if lead entered: <b>leaverslead</b></p>
+<h3>TrackAlerts</h3>
+<p>LinkedIn Profile Changes Detected</p>
+<p>TAG <b>leaverslead</b> If Lead Entered</p>
 </div>
 <br>
 <div>
   <table id="LEADtable" class="table table-hover table-dark">
 
+
         </table>
   </div>
 <div>
-<h6>Leavers Dropped</h6>
+<h3>Dropped from LJFT Bucket</h3>
 <p>The Users Below are NO LONGER in the LJFT Shell.</p>
   <div>
     <table id="DROPtable" class="table table-hover table-dark">
@@ -375,4 +480,9 @@ $(document).ready(function(){
           </table>
     </div>
 </div>
+
+  <script>
+
+      </script>
+
 {% endblock %}

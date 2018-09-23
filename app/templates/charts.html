@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content %}
+<script>
+$(document).ready(function(){
+    $.getJSON( '/chartgenerator', function( response ) {
+      console.log(response);
+      var doughlabels = response.dough.labels;
+      var doughdata = response.dough.datasets;
+      var barlabels = response.bar.labels;
+      var bardata = response.bar.datasets;
+      console.log(doughlabels);
+      console.log(doughdata);
+      console.log(barlabels);
+      console.log(bardata);
+
+          $(function() {
+        //...
+
+        drawdough(doughlabels, doughdata);
+
+
+    });
+
+    function drawdough() {
+        var ctx = document.getElementById("dough").getContext("2d");
+        console.log(ctx);
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: doughlabels,
+                datasets: [{
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
+                    data: doughdata
+                }]
+            },
+            options: {}
+        });
+    }
+    $(function() {
+  //...
+
+  drawbar(barlabels, bardata);
+
+});
+    function drawbar() {
+        var ctx = document.getElementById("stacked").getContext("2d");
+        console.log(ctx);
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: barlabels,
+                for(var f=0;f<bardata.length;f++) {
+               console.log(f);
+               trHTML += '<tr><td>'
+                         + response.B[f].leaverid + '</td><td>'
+                         + response.B[f].leavername + '</td><td>'
+                         + response.B[f].leaverole + '</td><td>'
+                         + response.B[f].leaverfirm + '</td><td>'
+                         + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
+                         + response.B[f].leaverlink + ' ">LinkedIn</a></td><td><button class="PROSconfirm">Confirm</button></td></tr>';
+                 }
+                datasets: [{
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
+                    data: bardata
+                }]
+            },
+            options: {
+              scales: {
+            xAxes: [{
+                stacked: true
+            }],
+            yAxes: [{
+                stacked: true
+            }]
+        }
+            }
+        });
+    }
+  });
+  $("#chartselect").on('change', function() {
+    mychart.destroy();
+    var selection = $('#chartselect').val();
+
+    if (selection.text() === 'History') {
+      $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
+        var labels = response.labls;
+        var data = response.data;
+        drawBar(labels, data);
+
+
+        function drawBar() {
+            var ctx = document.getElementById("mychart").getContext("2d");
+            console.log(ctx);
+            new Chart(ctx, {
+                type: 'StackedBar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
+                        data: data
+                    }]
+                },
+                options: {}
+            });
+        }
+
+      });
+    }else {
+        var link='';
+      }
+    $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
+      var labels = response.A.date;
+      var data = response.B.data;
+
+      // console.log(response);
+      console.log(response.B.length);
+    });
+  });
+});
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <select name="chartselect" id="chartselect">
+        <option value="doughnut">Status</option>
+        <option value="stackedbar">History</option>
+      </select>
+        </div>
+      </div>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="dough" width="600" height="400"></canvas>
+                </div>
+                <div class="card-body">
+                    <canvas id="stacked" width="600" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+     </div>
+</div>
+
+
+
+{% endblock %}

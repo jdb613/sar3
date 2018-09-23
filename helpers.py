@@ -1,12 +1,13 @@
 import pandas as pd
 import xlrd
-from app.models import Srep, Leaver, Suspect
+from app.models import Srep, Leaver, Suspect, Buckets
 from app import db
 import os
 import datetime
 from flask_login import current_user
 import bokeh.plotting
 from bokeh.embed import components
+from sqlalchemy import func
 
 ######## Bokeh ##############
 def create_figure(b_selection, bins):
@@ -27,13 +28,27 @@ def create_figure(b_selection, bins):
 
 ######## Utilities ##############
 def result(target, field, rez, flag):
-    if field == 'result':
+    if rez == 'Recapture' or rez == 'Lead' or rez == 'Left Industry':
         target.result = rez
-    if flag == 'Y':
-        target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-    else:
+        target.prosrole = target.trackrole
+        target.prosfirm = target.trackfirm
+        target.outprosshell = datetime.datetime.now(datetime.timezone.utc)
+        target.inprosshell = 'No'
+
+    elif rez == 'Inactive':
+        target.result = rez
+
+    elif rez == 'Manual Track':
         target.link = flag
-        target.trackend = datetime.datetime.now(datetime.timezone.utc)
+        target.trackend = 'None'
+        target.trackrole = 'None'
+        target.trackfirm = 'None'
+        target.tracklocation = 'None'
+        target.lasttracked = 'None'
+        target.outprosshell = datetime.datetime.now(datetime.timezone.utc)
+        target.result = rez
+        target.inprosshell = 'No'
+
     db.session.commit()
     return 'Success'
 
@@ -46,6 +61,71 @@ def proslinkgen(num):
     link = 'PROS C ' + fnum + ' ' + snum
     return link
 
+def gen_trackalert_table(trackalert_list):
+    ta_headers = str('<thead><tr><th>ID</th>'
+                + '<th>Name</th>'
+                + '<th>Old Role</th>'
+                + '<th>Old Firm</th>'
+                + '<th>New Role</th>'
+                + '<th>New Firm</th>'
+                + '<th>Location</th>'
+                + '<th>Link</th>'
+                + '<th>Alert Date</th>'
+                + '<th>Actions</th>'
+                + '</tr></thead><tbody>')
+    table_body = ''
+
+    for item in trackalert_list:
+        table_body += str('<tr><td>'
+        + str(item['leaverid']) + '</td><td>'
+        + str(item['leavername']) + '</td><td>'
+        + str(item['leaverrole']) + '</td><td>'
+        + str(item['leaverfirm']) + '</td><td>'
+        + str(item['trackrole']) + '</td><td>'
+        + str(item['trackfirm']) + '</td><td>'
+        + str(item['leaverlocation']) + '</td><td><a target="_blank" href="'
+        + str(item['leaverlink']) + ' ">LinkedIn</a></td><td>"'
+        + str(item['trackend']) + ' "</td><td><div class="dropdown"><div class="btn-group">'
+        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + 'Action<span class="caret"></span></button>'
+        + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
+        + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
+        + '<li><a class="dropdown-item" href="#">Lead</a></li>'
+        + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+        + '<li><a class="dropdown-item" href="#">Error</a></li></ul></div></div></td></tr>')
+    table_body += '</tbody>'
+    table = ta_headers + table_body
+    return(table)
+
+def gen_dropped_table(drop_list):
+    drop_headers = str('<thead><tr>'
+                        + '<th>ID</th>'
+                        + '<th>Name</th>'
+                        + '<th>Role</th>'
+                        + '<th>Firm</th>'
+                        + '<th>PROS Link</th>'
+                        + '<th>Actions</th>'
+                        + '</tr></thead><tbody>')
+    table_body = ''
+    for item in drop_list:
+        table_body += str('<tr><td>'
+        + str(item['leaverid']) + '</td><td>'
+        + str(item['leavername']) + '</td><td>'
+        + str(item['prosrole']) + '</td><td>'
+        + str(item['prosfirm']) + '</td><td>'
+        + str(item['proslink']) + ' "</td><td><div class="dropdown"><div class="btn-group">'
+        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + 'Action<span class="caret"></span></button>'
+        + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
+        + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
+        + '<li><a class="dropdown-item" href="#">Lead</a></li>'
+        + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+        + '<li><a class="dropdown-item" href="#">Manual Track</a></li>'
+        + '<li><a class="dropdown-item" href="#">Inactive</a></li></ul></div></div></td></tr>')
+    table_body += '</tbody>'
+    table = drop_headers + table_body
+    return(table)
+
 def actionfill(flag):
     parentdict = {}
     DROP_dict = {}
@@ -56,38 +136,39 @@ def actionfill(flag):
         print('Flag is B')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
         for l in TA_Confirm:
-            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'datetimeresult': l.datetimeresult, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
+            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'trackend': l.trackend, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
-        parentdict['B'] = TA_list
+        ta_table = gen_trackalert_table(TA_list)
+        parentdict['B'] = ta_table
 
     elif flag == 'A':
         print('Flag is A')
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
         for d in DROP_Confirm:
-            num = d.prosnum
-            link = proslinkgen(num)
-            DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': d.prosnum}
+            # num = d.prosnum
+            # link = proslinkgen(num)
+            DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': proslinkgen(d.prosnum)}
             DROP_list.append(DROP_dict)
-        parentdict['A'] = DROP_list
+        dropped_table = gen_dropped_table(DROP_list)
+        parentdict['A'] = dropped_table
 
     elif flag == 'AB':
         print('Flag is AB')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
-        print('Number of TrackAlert Leavers: ', len(TA_Confirm))
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
-        print('Number of Dropped Leavers: ', len(DROP_Confirm))
-        for i in DROP_Confirm:
-            print('DropConfirm Name: ', i.name)
+
         for l in TA_Confirm:
-            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'datetimeresult': l.datetimeresult, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
+            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'trackend': l.trackend, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
-        parentdict['B'] = TA_list
+        ta_table = gen_trackalert_table(TA_list)
+        parentdict['B'] = ta_table
         for d in DROP_Confirm:
-            num = d.prosnum
-            link = proslinkgen(num)
-            DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': d.prosnum}
+            # num = d.prosnum
+            # link = proslinkgen(num)
+            DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': proslinkgen(d.prosnum)}
             DROP_list.append(DROP_dict)
-        parentdict['A'] = DROP_list
+        dropped_table = gen_dropped_table(DROP_list)
+        parentdict['A'] = dropped_table
 
     return parentdict
 
@@ -203,3 +284,73 @@ def populate_table(thing):
     parentdict['A'] = leaverdict
     parentdict['B'] = susp_list
     return parentdict
+
+def chart_data(type):
+    data = {}
+    if type == 'doughnut':
+        result_list = []
+        count_list = []
+        for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
+            print('Users status %s: %d' % (result, count))
+            result_list.append(result)
+            count_list.append(count)
+        data['labels'] = result_list
+        data['datasets'] = count_list
+        return data
+    elif type == 'stackedbar':
+        data = {}
+        df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
+        df.date = df.date.apply(lambda x: str(x).split(' ')[0])
+        df1 = df.groupby("date").count()
+        dfgroup = df1.reset_index()
+        date_list = dfgroup.pop('date')
+        data['labels'] = date_list
+        datasets = []
+        labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
+        for l in labels:
+            dset = {}
+            members = db.session.query(Buckets).filter_by(status=l).all()
+            values = []
+            for m in members:
+                values.append(m.count)
+            dset[l] = values
+            datasets.append(dset)
+        data['datasets'] = datasets
+
+        return data
+
+    else:
+        data = {}
+        dough = {}
+        result_list = []
+        count_list = []
+        for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
+            print('Users status %s: %d' % (result, count))
+            result_list.append(result)
+            count_list.append(count)
+        dough['labels'] = result_list
+        dough['datasets'] = count_list
+
+        bar = {}
+        df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
+        df.date = df.date.apply(lambda x: str(x).split(' ')[0])
+        df1 = df.groupby("date").count()
+        dfgroup = df1.reset_index()
+        lst = list(dfgroup.date)
+        date_list = lst
+        bar['labels'] = date_list
+        datasets = []
+        labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
+        for l in labels:
+            dset = {}
+            members = db.session.query(Buckets).filter_by(status=l).all()
+            values = []
+            for m in members:
+                values.append(m.count)
+            dset[l] = values
+            datasets.append(dset)
+        bar['datasets'] = datasets
+
+        data['dough'] = dough
+        data['bar'] = bar
+        return data
