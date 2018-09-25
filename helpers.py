@@ -338,7 +338,7 @@ def chart_data(type):
             j['data'] = i['set'][1]
             data['datasets'].append(j)
 
-        colors = ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd", "#5e4fa2", '#D6E9C6']
+        colors = ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#FFFF00", "#3e95cd", "#5e4fa2", '#D6E9C6']
         i = 0
         while i < len(data['datasets']):
             data['datasets'][i]['backgroundColor'] = colors[i]
