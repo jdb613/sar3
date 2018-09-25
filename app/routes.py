@@ -72,7 +72,7 @@ def confirm():
             iprosid = int(prosid)
             updated = Leaver.query.filter_by(id=iprosid).first()
             db = result(updated, 'result', 'Tracking', link)
-            print('Manually Tracking: ', mlink)
+            print('Manually Tracking: ', db)
             placed_dict = actionfill('A')
             return json.dumps(placed_dict)
         else:

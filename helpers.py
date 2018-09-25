@@ -28,6 +28,12 @@ def create_figure(b_selection, bins):
 
 ######## Utilities ##############
 def result(target, field, rez, flag):
+    print('Starting Result Processing...')
+    print('Result Content As Delivered: ')
+    print(target)
+    print(field)
+    print(rez)
+    print(flag)
     if rez == 'Recapture' or rez == 'Lead' or rez == 'Left Industry':
         target.result = rez
         target.prosrole = target.trackrole
@@ -38,18 +44,21 @@ def result(target, field, rez, flag):
     elif rez == 'Inactive':
         target.result = rez
 
-    elif rez == 'Manual Track':
+    elif rez == 'Tracking':
+        print('Confirmed: ', rez)
         target.link = flag
-        target.trackend = 'None'
-        target.trackrole = 'None'
-        target.trackfirm = 'None'
-        target.tracklocation = 'None'
-        target.lasttracked = 'None'
+        target.trackend = None
+        target.trackrole = None
+        target.trackfirm = None
+        target.tracklocation = None
+        target.lasttracked = None
         target.outprosshell = datetime.datetime.now(datetime.timezone.utc)
         target.result = rez
         target.inprosshell = 'No'
+        target.trackstart = datetime.datetime.now(datetime.timezone.utc)
 
     db.session.commit()
+    print('Result Proces Complete')
     return 'Success'
 
 ######## Index/Homepage HELPERS ##############
