@@ -299,15 +299,17 @@ def charts():
 
 @app.route('/chartgenerator', methods=['GET', 'POST'])
 def chartgenerator():
-    action_type = request.args.get( 'data', '')
-    chartdata = chart_data(action_type)
-    print('Chartdata type', type(chartdata))
-    print('dough type', type(chartdata['dough']))
-    print('dough type', type(chartdata['bar']))
-    print('bar data type', type(chartdata['bar']['datasets']))
-    print('dough data type', type(chartdata['dough']['datasets']))
-    print('dough label type', type(chartdata['dough']['labels']))
-    print('bar label type', type(chartdata['bar']['labels']))
+    if request.method == 'POST':
+        action_type = request.args.get( 'data', '')
+        chartdata = chart_data(action_type)
+
+    chartdata = {}
+    chartdata1 = chart_data('doughnut')
+    chartdata2 = chart_data('stackedbar')
+    chartdata['A']= chartdata1
+    chartdata['B']= chartdata2
+
+
     return json.dumps(chartdata)
 
 

@@ -3,119 +3,159 @@
 {% block content %}
 <script>
 $(document).ready(function(){
+  var newchart1=null;
+  var newchart2=null;
     $.getJSON( '/chartgenerator', function( response ) {
       console.log(response);
-      var doughlabels = response.dough.labels;
-      var doughdata = response.dough.datasets;
-      var barlabels = response.bar.labels;
-      var bardata = response.bar.datasets;
-      console.log(doughlabels);
-      console.log(doughdata);
-      console.log(barlabels);
-      console.log(bardata);
+      var data1 = response.A;
+
+      console.log(data1);
 
           $(function() {
         //...
 
-        drawdough(doughlabels, doughdata);
-
-
-    });
-
-    function drawdough() {
-        var ctx = document.getElementById("dough").getContext("2d");
-        console.log(ctx);
-        new Chart(ctx, {
+        var ctx = document.getElementById("dchart").getContext("2d");
+        var newchart1 = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: doughlabels,
+                labels: data1['labels'],
                 datasets: [{
-                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
-                    data: doughdata
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd"],
+                    data: data1['datasets']
                 }]
             },
             options: {}
         });
-    }
-    $(function() {
-  //...
-
-  drawbar(barlabels, bardata);
-
-});
-    function drawbar() {
-        var ctx = document.getElementById("stacked").getContext("2d");
+        var data2 = response.B;
+        var ctx = document.getElementById("bchart").getContext("2d");
         console.log(ctx);
-        new Chart(ctx, {
+        console.log(data2);
+        var newchart2 = new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: barlabels,
-                for(var f=0;f<bardata.length;f++) {
-               console.log(f);
-               trHTML += '<tr><td>'
-                         + response.B[f].leaverid + '</td><td>'
-                         + response.B[f].leavername + '</td><td>'
-                         + response.B[f].leaverole + '</td><td>'
-                         + response.B[f].leaverfirm + '</td><td>'
-                         + response.B[f].leaverlocation + '</td><td><a target="_blank" href="'
-                         + response.B[f].leaverlink + ' ">LinkedIn</a></td><td><button class="PROSconfirm">Confirm</button></td></tr>';
-                 }
-                datasets: [{
-                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
-                    data: bardata
-                }]
-            },
+            data: data2,
             options: {
               scales: {
-            xAxes: [{
-                stacked: true
-            }],
-            yAxes: [{
-                stacked: true
-            }]
+                xAxes: [{stacked: true}],
+                yAxes: [{
+                  stacked: true,
+        	        ticks: {
+          	beginAtZero: true
+           }
+        }]
         }
             }
         });
-    }
+
+    });
+
+    // function drawdough() {
+    //
+    //     var ctx = document.getElementById("mychart").getContext("2d");
+    //
+    //     console.log(ctx);
+    //     var newchart = new Chart(ctx, {
+    //         type: 'doughnut',
+    //         data: {
+    //             labels: data['labels'],
+    //             datasets: [{
+    //                 backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd"],
+    //                 data: data['datasets']
+    //             }]
+    //         },
+    //         options: {}
+    //     });
+    // }
+//     $(function() {
+//   //...
+//
+//   // drawbar(data);
+//
+// });
+    // function drawbar() {
+    //     var ctx = document.getElementById("mychart").getContext("2d");
+    //     console.log(ctx);
+    //     console.log(data);
+    //     var newchart = new Chart(ctx, {
+    //         type: 'bar',
+    //         data: data,
+    //         options: {
+    //           scales: {
+    //             xAxes: [{stacked: true}],
+    //             yAxes: [{
+    //               stacked: true,
+    //     	        ticks: {
+    //       	beginAtZero: true
+    //        }
+    //     }]
+    //     }
+    //         }
+    //     });
+    // }
   });
   $("#chartselect").on('change', function() {
-    mychart.destroy();
+
     var selection = $('#chartselect').val();
-
-    if (selection.text() === 'History') {
+    if (selection === 'doughnut') {
+      if(newchart1!=null){
+        newchart1.destroy();
+        $("canvas#dchart").remove();
+        $("div.dchartdiv").append('<canvas id="dchart" width="600" height="400"></canvas>');
+    }
+      console.log(selection);
       $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
-        var labels = response.labls;
-        var data = response.data;
-        drawBar(labels, data);
+        console.log(response);
+        var data1 = response;
+        var ctx = document.getElementById("dchart").getContext("2d");
 
-
-        function drawBar() {
-            var ctx = document.getElementById("mychart").getContext("2d");
-            console.log(ctx);
-            new Chart(ctx, {
-                type: 'StackedBar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd" ],
-                        data: data
-                    }]
-                },
-                options: {}
-            });
-        }
+        console.log(ctx);
+        var newchart1 = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data1['labels'],
+                datasets: [{
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd"],
+                    data: data1['datasets']
+                }]
+            },
+            options: {}
+        });
 
       });
-    }else {
-        var link='';
-      }
-    $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
-      var labels = response.A.date;
-      var data = response.B.data;
+    }else if(selection === 'stackedbar') {
+      if(newchart2!=null){
+        newchart2.destroy();
+        $("canvas#bchart").remove();
+        $("div.bchartdiv").append('<canvas id="bchart" width="600" height="400"></canvas>');
+    }
+      console.log(selection);
+      var selection = $('#chartselect').val();
+      $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
+        console.log(response);
+        var data2 = response;
+        var ctx = document.getElementById("bchart").getContext("2d");
+        console.log(ctx);
+        console.log(data2);
+        var newchart2 = new Chart(ctx, {
+            type: 'bar',
+            data: data2,
+            options: {
+              scales: {
+                xAxes: [{stacked: true}],
+                yAxes: [{
+                  stacked: true,
+        	        ticks: {
+          	beginAtZero: true
+           }
+        }]
+        }
+            }
+        });
 
-      // console.log(response);
-      console.log(response.B.length);
-    });
+      });
+    }else{
+
+    }
+
   });
 });
 </script>
@@ -132,11 +172,11 @@ $(document).ready(function(){
     <div class="row">
         <div class="col-md-9">
             <div class="card">
-                <div class="card-body">
-                    <canvas id="dough" width="600" height="400"></canvas>
+                <div class="card-body" id="dchartdiv">
+                    <canvas id="dchart" width="600" height="400"></canvas>
                 </div>
-                <div class="card-body">
-                    <canvas id="stacked" width="600" height="400"></canvas>
+                <div class="card-body" id="bchartdiv">
+                    <canvas id="bchart" width="600" height="400"></canvas>
                 </div>
             </div>
         </div>

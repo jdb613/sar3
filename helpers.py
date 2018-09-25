@@ -1,7 +1,7 @@
 import pandas as pd
 import xlrd
 from app.models import Srep, Leaver, Suspect, Buckets
-from app import db
+from app import app, db
 import os
 import datetime
 from flask_login import current_user
@@ -113,7 +113,7 @@ def gen_dropped_table(drop_list):
         + str(item['leavername']) + '</td><td>'
         + str(item['prosrole']) + '</td><td>'
         + str(item['prosfirm']) + '</td><td>'
-        + str(item['proslink']) + ' "</td><td><div class="dropdown"><div class="btn-group">'
+        + str(item['proslink']) + ' </td><td><div class="dropdown"><div class="btn-group">'
         + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
@@ -288,6 +288,7 @@ def populate_table(thing):
 def chart_data(type):
     data = {}
     if type == 'doughnut':
+        print('getting data for doughnut chart')
         result_list = []
         count_list = []
         for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
@@ -298,59 +299,76 @@ def chart_data(type):
         data['datasets'] = count_list
         return data
     elif type == 'stackedbar':
+        print('getting data for bar chart')
         data = {}
         df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
         df.date = df.date.apply(lambda x: str(x).split(' ')[0])
-        df1 = df.groupby("date").count()
-        dfgroup = df1.reset_index()
-        date_list = dfgroup.pop('date')
-        data['labels'] = date_list
-        datasets = []
-        labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
-        for l in labels:
-            dset = {}
+        dates = df.date.unique()
+        dt_list = []
+        for d in dates:
+            dt_list.append(d)
+        data['labels'] = dt_list
+
+        label_list = []
+        for l in df.status.unique():
+            label_list.append(l)
+        list_data = []
+        for l in label_list:
+            d = {}
             members = db.session.query(Buckets).filter_by(status=l).all()
             values = []
             for m in members:
                 values.append(m.count)
-            dset[l] = values
-            datasets.append(dset)
-        data['datasets'] = datasets
+            d['set'] = [m.status, values]
+            list_data.append(d)
+
+        data['datasets'] = []
+        for i in list_data:
+            j = {}
+            j['label'] = i['set'][0]
+            j['data'] = i['set'][1]
+            data['datasets'].append(j)
+
+        colors = ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd", "#5e4fa2", '#D6E9C6']
+        i = 0
+        while i < len(data['datasets']):
+            data['datasets'][i]['backgroundColor'] = colors[i]
+            i += 1
 
         return data
 
-    else:
-        data = {}
-        dough = {}
-        result_list = []
-        count_list = []
-        for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
-            print('Users status %s: %d' % (result, count))
-            result_list.append(result)
-            count_list.append(count)
-        dough['labels'] = result_list
-        dough['datasets'] = count_list
-
-        bar = {}
-        df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
-        df.date = df.date.apply(lambda x: str(x).split(' ')[0])
-        df1 = df.groupby("date").count()
-        dfgroup = df1.reset_index()
-        lst = list(dfgroup.date)
-        date_list = lst
-        bar['labels'] = date_list
-        datasets = []
-        labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
-        for l in labels:
-            dset = {}
-            members = db.session.query(Buckets).filter_by(status=l).all()
-            values = []
-            for m in members:
-                values.append(m.count)
-            dset[l] = values
-            datasets.append(dset)
-        bar['datasets'] = datasets
-
-        data['dough'] = dough
-        data['bar'] = bar
-        return data
+    # else:
+    #     data = {}
+    #     dough = {}
+    #     result_list = []
+    #     count_list = []
+    #     for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
+    #         print('Users status %s: %d' % (result, count))
+    #         result_list.append(result)
+    #         count_list.append(count)
+    #     dough['labels'] = result_list
+    #     dough['datasets'] = count_list
+    #
+    #     bar = {}
+    #     df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
+    #     df.date = df.date.apply(lambda x: str(x).split(' ')[0])
+    #     df1 = df.groupby("date").count()
+    #     dfgroup = df1.reset_index()
+    #     lst = list(dfgroup.date)
+    #     date_list = lst
+    #     bar['labels'] = date_list
+    #     datasets = []
+    #     labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
+    #     for l in labels:
+    #         dset = {}
+    #         members = db.session.query(Buckets).filter_by(status=l).all()
+    #         values = []
+    #         for m in members:
+    #             values.append(m.count)
+    #         dset[l] = values
+    #         datasets.append(dset)
+    #     bar['datasets'] = datasets
+    #
+    #     data['dough'] = dough
+    #     data['bar'] = bar
+    #     return data
