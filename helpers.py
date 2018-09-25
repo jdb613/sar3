@@ -198,21 +198,21 @@ def reset_leaver(id):
     lvr_id = int(id)
     reset_lvr = Leaver.query.filter_by(id=lvr_id).first()
     reset_suspects = Suspect.query.filter_by(leaverid=lvr_id).all()
-    reset_lvr.result = 'Lost'
-    reset_lvr.leaverrole = None
-    reset_lvr.leaverfirm = None
-    reset_lvr.leaverlocation = None
-    reset_lvr.link = None
+    reset_lvr.result = 'Tracking'
+    #reset_lvr.leaverrole = None
+    #reset_lvr.leaverfirm = None
+    #reset_lvr.leaverlocation = None
+    #reset_lvr.link = None
     reset_lvr.trackrole = None
     reset_lvr.trackfirm = None
     reset_lvr.tracklocation = None
     reset_lvr.lasttracked = None
     reset_lvr.datetimeresult = None
-    reset_lvr.suspectcheck = None
+    #reset_lvr.suspectcheck = None
     reset_lvr.trackend = None
-    for s in reset_suspects:
-        s.datetimeresult = None
-        s.result = None
+    #for s in reset_suspects:
+        #s.datetimeresult = None
+        #s.result = None
     db.session.commit()
     return 'Success'
 
