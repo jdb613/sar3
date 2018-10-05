@@ -252,7 +252,7 @@ def placeclick():
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
     lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-    lhit.result = 'User Placed'
+    lhit.result = 'Recapture'
     db.session.commit()
 
     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
@@ -270,7 +270,7 @@ def repclick():
     lhit.link = hit.slink
     lhit.leaverlocation = hit.slocation
     lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-    lhit.result = 'Rep Placed'
+    lhit.result = 'Left Industry'
     db.session.commit()
 
     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
