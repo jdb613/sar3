@@ -261,6 +261,18 @@ $(document).ready(function(){
      $(document).on('click', 'li', function(){
          var selection = $(this).parents('.dropdown').find('button').text($(this).text());
          console.log(selection);
+         $.bootstrapGrowl(selection.text(), {
+             ele: 'body',
+             type: 'success',
+             offset: {from: 'top', amount: 20},
+             align: 'right'
+           });
+           // $.bootstrapGrowl(selection, {
+           //     ele: 'body',
+           //     type: 'success',
+           //     offset: {from: 'top', amount: 20},
+           //     align: 'right'
+           //   });
           if (selection.text() === 'Manual Track') {
               var link=prompt("Enter LinkedIn Profile Address");
           }else {
@@ -272,12 +284,7 @@ $(document).ready(function(){
 
 
            $.getJSON( '/confirm', { 'id' : id, 'selection': selection.text(), 'table': table, 'link': link } , function( response ) {
-             $.bootstrapGrowl("Tracking User", {
-                 ele: 'body',
-                 type: 'success',
-                 offset: {from: 'top', amount: 20},
-                 align: 'right'
-               });
+
                if (table === 'LEADtable') {
                    $('#LEADtable').find('td').remove();
                    var trHTML = response.B

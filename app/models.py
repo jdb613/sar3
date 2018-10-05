@@ -78,11 +78,11 @@ class LJFT(db.Model):
     def __repr__(self):
         return '<LJFT {}>'.format(self.name)
 
+
+
 @login.user_loader
 def load_user(id):
     return Srep.query.get(int(id))
-
-
 # flask db init
 # flask db migrate -m "db setup"
 # flask db upgrade

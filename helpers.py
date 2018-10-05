@@ -129,11 +129,16 @@ def gen_dropped_table(drop_list):
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
         + '<li><a class="dropdown-item" href="#">Lead</a></li>'
         + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+        + '<li><a class="dropdown-item" href="#">Engaged</a></li>'
+        + '<li><a class="dropdown-item" href="#">Delayed Trial</a></li>'
         + '<li><a class="dropdown-item" href="#">Manual Track</a></li>'
         + '<li><a class="dropdown-item" href="#">Inactive</a></li></ul></div></div></td></tr>')
     table_body += '</tbody>'
     table = drop_headers + table_body
     return(table)
+
+def delay_delete(ident):
+    leaver = Leaver.query.filter_by(id=ident).first()
 
 def actionfill(flag):
     parentdict = {}
@@ -338,12 +343,12 @@ def chart_data(type):
             j['data'] = i['set'][1]
             data['datasets'].append(j)
 
-        colors = ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#3e95cd", "#5e4fa2", '#D6E9C6']
+        colors = ["#3e95cd", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#c45850", "#5e4fa2", '#D6E9C6', "#085b83"]
         i = 0
         while i < len(data['datasets']):
             data['datasets'][i]['backgroundColor'] = colors[i]
             i += 1
-
+        print('Bar Chart Data: ', data)
         return data
 
     # else:

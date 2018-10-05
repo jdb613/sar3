@@ -61,8 +61,8 @@ def confirm():
         else:
             iprosid = int(prosid)
             updated = Leaver.query.filter_by(id=iprosid).first()
-            db = result(updated, 'result', action_type, 'Y')
-            print('Changed Result Field to Lead: ', db)
+            db_upd = result(updated, 'result', action_type, 'Y')
+            print('Changed Result Field to Lead: ', db_upd)
             placed_dict = actionfill('B')
             return json.dumps(placed_dict)
 
@@ -71,15 +71,25 @@ def confirm():
         if action_type == 'Manual Track':
             iprosid = int(prosid)
             updated = Leaver.query.filter_by(id=iprosid).first()
-            db = result(updated, 'result', 'Tracking', link)
-            print('Manually Tracking: ', db)
+            db_upd = result(updated, 'result', 'Tracking', link)
+            print('Manually Tracking: ', db_upd)
+            placed_dict = actionfill('A')
+            return json.dumps(placed_dict)
+
+        elif action_type == 'Delayed Trial':
+            iprosid = int(prosid)
+            updated = Leaver.query.filter_by(id=iprosid).first()
+            updated.suspects.delete()
+            Leaver.query.filter_by(id=iprosid).delete()
+            db.session.commit()
+
             placed_dict = actionfill('A')
             return json.dumps(placed_dict)
         else:
             iprosid = int(prosid)
             updated = Leaver.query.filter_by(id=iprosid).first()
-            db = result(updated, 'result', action_type, 'Y')
-            print('DB Addition Result: ', db)
+            db_upd = result(updated, 'result', action_type, 'Y')
+            print('DB Addition Result: ', db_upd)
             placed_dict = actionfill('A')
             return json.dumps(placed_dict)
 
