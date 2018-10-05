@@ -7,12 +7,17 @@ $(document).ready(function(){
       console.log(response);
       var trHTML = response.B
       var drHTML = response.A
+      var erHTML = response.C
           console.log(trHTML);
           $('#LEADtable').html(trHTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
           console.log(drHTML);
           $('#DROPtable').html(drHTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
+          console.log(erHTML);
+          $('#ENGAGEtable').html(erHTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
+          });
           });
 
 
@@ -295,7 +300,12 @@ $(document).ready(function(){
                   var trHTML = response.A
                   $('#DROPtable').html(trHTML);
                   $( ".spin-grid" ).removeClass( "fa-spin" );
-                }
+                }else if (table == 'ENGAGEtable') {
+                   $('#ENGAGEtable').find('td').remove();
+                   var erHTML = response.C
+                   $('#ENGAGEtable').html(erHTML);
+                   $( ".spin-grid" ).removeClass( "fa-spin" );
+                 }
                // $('#DROPtable').find('td').remove();
                // var trHTML = response.A
                //     console.log(trHTML);
@@ -303,7 +313,7 @@ $(document).ready(function(){
                //     $( ".spin-grid" ).removeClass( "fa-spin" );
                    });
          });
-});
+
 
 
     // what you want to happen when mouseover and mouseout
@@ -320,164 +330,23 @@ $(document).ready(function(){
      // });
 
 </script>
-<!-- <table class="table">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>
-              <div class="dropdown">
-                <div class="btn-group">
-                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Action<span class="caret"></span></button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                    <li><a class="dropdown-item" href="#">Recapture</a></li>
-                    <li><a class="dropdown-item" href="#">Lead</a></li>
-                    <li><a class="dropdown-item" href="#">Left Industry</a></li>
-                    <li><a class="dropdown-item" href="#">Error</a></li>
-                  </ul>
-                </div>
-              </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>
-                <div class="dropdown">
-                  <div class="btn-group">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Action<span class="caret"></span></button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                      <li><a class="dropdown-item" href="#">Item</a></li>
-                      <li><a class="dropdown-item" href="#">Another item</a></li>
-                      <li><a class="dropdown-item" href="#">One more item</a></li>
-                    </ul>
-                  </div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>
-              <div class="dropdown">
-                <div class="btn-group">
-                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Action<span class="caret"></span></button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                    <li><a class="dropdown-item" href="#">Item</a></li>
-                    <li><a class="dropdown-item" href="#">Another item</a></li>
-                    <li><a class="dropdown-item" href="#">One more item</a></li>
-                  </ul>
-                </div>
-              </div>
-            </td>
-        </tr>
-    </tbody>
-</table> -->
-<!-- <table class="table">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>
-              <div class="container">
-                <div class="dropdown">
-                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Action
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Recapture</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Lead</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Left Industry</a></li>
-                    <!-- <li role="presentation" class="divider"></li> -->
-                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Manual Track</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Inactive</a></li>
-                  </ul>
-                </div>
 
-            </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>
-              <div class="container">
-                <div class="dropdown">
-                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Dropdown Example
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-                  </ul>
-                </div><br>
-
-            </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>
-              <div class="container">
-                <div class="dropdown">
-                  <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Dropdown Example
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-                  </ul>
-                </div><br>
-
-            </div>
-            </td>
-        </tr>
-    </tbody>
-</table> -->
 
 
 <p align="right">Logged In: {{ current_user.name }}</p>
+<p>TAG <b>leaverslead</b> If Lead Entered</p>
 <div>
 <h3>TrackAlerts</h3>
 <p>LinkedIn Profile Changes Detected</p>
-<p>TAG <b>leaverslead</b> If Lead Entered</p>
-</div>
-<br>
+
 <div>
   <table id="LEADtable" class="table table-hover table-dark">
 
 
         </table>
   </div>
+</div>
+<br>
 <div>
 <h3>Dropped from LJFT Bucket</h3>
 <p>The Users Below are NO LONGER in the LJFT Shell.</p>
@@ -486,6 +355,17 @@ $(document).ready(function(){
 
           </table>
     </div>
+</div>
+<br>
+<div>
+<h3>Engagements</h3>
+<p>Actively Selling to These Users</p>
+<div>
+  <table id="ENGAGEtable" class="table table-hover table-dark">
+
+
+        </table>
+  </div>
 </div>
 
   <script>

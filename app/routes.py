@@ -5,7 +5,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Leaver, Suspect, Srep
 from sqlalchemy import DateTime
 from werkzeug.urls import url_parse
-from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, result, reset_leaver, create_figure, exitpros, chart_data
+from helpers import processfile, pd2class, inpros, fillselect, populate_table, actionfill, dropfill, reset_leaver, create_figure, exitpros, chart_data, delay_delete
+from helpers import result
 import datetime
 import pandas as pd
 from collections import Counter
@@ -78,19 +79,38 @@ def confirm():
 
         elif action_type == 'Delayed Trial':
             iprosid = int(prosid)
-            updated = Leaver.query.filter_by(id=iprosid).first()
-            updated.suspects.delete()
-            Leaver.query.filter_by(id=iprosid).delete()
-            db.session.commit()
+            rslt = delay_delete(iprosid)
+            print('%s in Deleting User and Suspect' %(rslt))
 
             placed_dict = actionfill('A')
             return json.dumps(placed_dict)
+
+        else:
+            iprosid = int(prosid)
+            updated = Leaver.query.filter_by(id=iprosid).first()
+            print('Leaver Query Confirm: ', updated.name)
+            db_upd = result(updated, "r", action_type, 'Y')
+            print('DB Addition Result: ', db_upd)
+            placed_dict = actionfill('A')
+            return json.dumps(placed_dict)
+
+
+    elif table == 'ENGAGEtable':
+
+        if action_type == 'Manual Track':
+            iprosid = int(prosid)
+            updated = Leaver.query.filter_by(id=iprosid).first()
+            db_upd = result(updated, 'result', 'Tracking', link)
+            print('Manually Tracking: ', db_upd)
+            placed_dict = actionfill('C')
+            return json.dumps(placed_dict)
+
         else:
             iprosid = int(prosid)
             updated = Leaver.query.filter_by(id=iprosid).first()
             db_upd = result(updated, 'result', action_type, 'Y')
             print('DB Addition Result: ', db_upd)
-            placed_dict = actionfill('A')
+            placed_dict = actionfill('C')
             return json.dumps(placed_dict)
 
     else:

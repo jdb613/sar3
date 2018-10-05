@@ -39,6 +39,8 @@ class Leaver(db.Model):
     trackstart = db.Column(db.DateTime, index=True)
     trackend = db.Column(db.DateTime, index=True)
     outprosshell = db.Column(db.DateTime, index=True)
+    estart = db.Column(db.DateTime, index=True)
+    eend = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
         return '<Leaver {}>'.format(self.name)

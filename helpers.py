@@ -31,7 +31,7 @@ def result(target, field, rez, flag):
     print('Starting Result Processing...')
     print('Result Content As Delivered: ')
     print(target)
-    print(field)
+    #print(field)
     print(rez)
     print(flag)
     if rez == 'Recapture' or rez == 'Lead' or rez == 'Left Industry':
@@ -40,9 +40,11 @@ def result(target, field, rez, flag):
         target.prosfirm = target.trackfirm
         target.outprosshell = datetime.datetime.now(datetime.timezone.utc)
         target.inprosshell = 'No'
+        target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
 
     elif rez == 'Inactive':
         target.result = rez
+        target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
 
     elif rez == 'Tracking':
         print('Confirmed: ', rez)
@@ -56,6 +58,17 @@ def result(target, field, rez, flag):
         target.result = rez
         target.inprosshell = 'No'
         target.trackstart = datetime.datetime.now(datetime.timezone.utc)
+
+    elif rez == 'Engaged':
+        print('Confirmed: ', rez)
+        target.estart = datetime.datetime.now(datetime.timezone.utc)
+        target.result = rez
+
+    elif rez == 'Lost Business':
+        print('Confirmed: ', rez)
+        target.eend = datetime.datetime.now(datetime.timezone.utc)
+        target.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
+        target.result = rez
 
     db.session.commit()
     print('Result Proces Complete')
@@ -101,7 +114,44 @@ def gen_trackalert_table(trackalert_list):
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
         + '<li><a class="dropdown-item" href="#">Lead</a></li>'
         + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+        + '<li><a class="dropdown-item" href="#">Engaged</a></li>'
         + '<li><a class="dropdown-item" href="#">Error</a></li></ul></div></div></td></tr>')
+    table_body += '</tbody>'
+    table = ta_headers + table_body
+    return(table)
+
+def gen_engagement_table(elist):
+    ta_headers = str('<thead><tr><th>ID</th>'
+                + '<th>Name</th>'
+                + '<th>Tracking Role</th>'
+                + '<th>Tracking Firm</th>'
+                + '<th>Location</th>'
+                + '<th>PROS Link</th>'
+                + '<th>Engagent Duration</th>'
+                + '<th>Link</th>'
+                + '<th>Actions</th>'
+                + '</tr></thead><tbody>')
+    table_body = ''
+
+    for item in elist:
+        table_body += str('<tr><td>'
+        + str(item['eid']) + '</td><td>'
+        + str(item['ename']) + '</td><td>'
+        + str(item['erole']) + '</td><td>'
+        + str(item['efirm']) + '</td><td>'
+        + str(item['elocation']) + '</td><td>'
+        + str(item['ePROS']) + '</td><td>'
+        + str(item['eduration']) + '</td><td><a target="_blank" href="'
+        + str(item['elink']) + ' ">LinkedIn</a></td><td>'
+        + '<div class="dropdown"><div class="btn-group">'
+        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + 'Action<span class="caret"></span></button>'
+        + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
+        + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
+        + '<li><a class="dropdown-item" href="#">Lost Business</a></li>'
+        + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+        + '<li><a class="dropdown-item" href="#">Manual Track</a></li>'
+        + '<li><a class="dropdown-item" href="#">Inactive</a></li></ul></div></div></td></tr>')
     table_body += '</tbody>'
     table = ta_headers + table_body
     return(table)
@@ -138,15 +188,28 @@ def gen_dropped_table(drop_list):
     return(table)
 
 def delay_delete(ident):
-    leaver = Leaver.query.filter_by(id=ident).first()
+    print('Starting Delay Delete')
+    try:
+        updated = Leaver.query.filter_by(id=ident).first()
+        print('Leaver Query Confirm: ', updated.name)
+        updated.suspects.delete()
+        Leaver.query.filter_by(id=ident).delete()
+        db.session.commit()
+        return 'Success'
+    except:
+        db.session.rollback()
+        return 'Failure'
+
+def e_duration(leaver):
+    d1 = leaver.estart.date()
+    d2 = datetime.date.today()
+    return abs((d2 - d1).days)
 
 def actionfill(flag):
     parentdict = {}
-    DROP_dict = {}
-    DROP_list = []
-    TA_dict = {}
-    TA_list = []
     if flag == 'B':
+        TA_dict = {}
+        TA_list = []
         print('Flag is B')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
         for l in TA_Confirm:
@@ -156,6 +219,8 @@ def actionfill(flag):
         parentdict['B'] = ta_table
 
     elif flag == 'A':
+        DROP_dict = {}
+        DROP_list = []
         print('Flag is A')
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
         for d in DROP_Confirm:
@@ -166,10 +231,28 @@ def actionfill(flag):
         dropped_table = gen_dropped_table(DROP_list)
         parentdict['A'] = dropped_table
 
+    elif flag == 'C':
+        ENG_dict = {}
+        ENG_list = []
+        print('Flag is C')
+        ENG_Confirm = Leaver.query.filter_by(result='Engaged', repcode=current_user.repcode).all()
+        for e in ENG_Confirm:
+            ENG_dict = {'eduration': e_duration(e), 'ename': e.name, 'efirm': e.trackfirm, 'erole': e.trackrole, 'eid': e.id, 'ePROS': proslinkgen(e.prosnum), 'elocation': e.leaverlocation, 'elink': e.link}
+            ENG_list.append(ENG_dict)
+        e_table = gen_engagement_table(ENG_list)
+        parentdict['C'] = e_table
+
     elif flag == 'AB':
+        DROP_dict = {}
+        DROP_list = []
+        TA_dict = {}
+        TA_list = []
+        ENG_dict = {}
+        ENG_list = []
         print('Flag is AB')
         TA_Confirm = Leaver.query.filter_by(result='TrackAlert', repcode=current_user.repcode).all()
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
+        ENG_Confirm = Leaver.query.filter_by(result='Engaged', repcode=current_user.repcode).all()
 
         for l in TA_Confirm:
             TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'trackend': l.trackend, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
@@ -183,6 +266,12 @@ def actionfill(flag):
             DROP_list.append(DROP_dict)
         dropped_table = gen_dropped_table(DROP_list)
         parentdict['A'] = dropped_table
+
+        for e in ENG_Confirm:
+            ENG_dict = {'eduration': e_duration(e), 'ename': e.name, 'efirm': e.trackfirm, 'erole': e.trackrole, 'eid': e.id, 'ePROS': proslinkgen(e.prosnum), 'elocation': e.leaverlocation, 'elink': e.link}
+            ENG_list.append(ENG_dict)
+        e_table = gen_engagement_table(ENG_list)
+        parentdict['C'] = e_table
 
     return parentdict
 
