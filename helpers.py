@@ -224,8 +224,6 @@ def actionfill(flag):
         print('Flag is A')
         DROP_Confirm = Leaver.query.filter_by(inprosshell='No', result='Lost', repcode=current_user.repcode).all()
         for d in DROP_Confirm:
-            # num = d.prosnum
-            # link = proslinkgen(num)
             DROP_dict = {'leavername': d.name, 'prosfirm': d.prosfirm, 'prosrole': d.prosrole, 'leaverid': d.id, 'proslink': proslinkgen(d.prosnum)}
             DROP_list.append(DROP_dict)
         dropped_table = gen_dropped_table(DROP_list)
@@ -413,7 +411,9 @@ def chart_data(type):
         data['labels'] = dt_list
 
         label_list = []
+        print('Bar Stacks:')
         for l in df.status.unique():
+            print(l)
             label_list.append(l)
         list_data = []
         for l in label_list:
@@ -439,6 +439,10 @@ def chart_data(type):
             i += 1
         print('Bar Chart Data: ', data)
         return data
+
+    elif type == 'scatter':
+        print('getting data for scatter chart')
+
 
     # else:
     #     data = {}

@@ -336,8 +336,10 @@ def chartgenerator():
     chartdata = {}
     chartdata1 = chart_data('doughnut')
     chartdata2 = chart_data('stackedbar')
+    chartdata3 = chart_data('scatter')
     chartdata['A']= chartdata1
     chartdata['B']= chartdata2
+    chartdata['C'] = chartdata3
 
 
     return json.dumps(chartdata)
