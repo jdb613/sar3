@@ -8,6 +8,11 @@ from flask_login import current_user
 import bokeh.plotting
 from bokeh.embed import components
 from sqlalchemy import func
+from bokeh.io import show, output_file
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure
+
+from bokeh.transform import jitter
 
 ######## Bokeh ##############
 def create_figure(b_selection, bins):
@@ -386,6 +391,53 @@ def populate_table(thing):
     parentdict['B'] = susp_list
     return parentdict
 
+def role_score(t):
+    if t.prosrole == None:
+        score = 4
+    elif 'Executive' in t.prosrole or 'Cheif' in t.prosrole:
+        score = 10
+    elif t.prosrole == 'Portfolio Manager':
+        score = 9
+    elif t.prosrole == 'Quant':
+        score = 8
+    elif t.prosrole == 'Trader':
+        score = 7
+    elif 'Risk' in t.prosrole:
+        score = 6
+    elif t.prosrole == 'Analyst':
+        score = 5
+    elif t.prosrole == 'Economist':
+        score = 4
+    elif 'Back' or 'Middle' in t.prosrole:
+        score = 3
+    else:
+        score = 4
+    return score
+
+def day_count(t):
+    if t.result == 'Tracking':
+        today = datetime.date.today()
+        start = t.trackstart.date()
+        days = abs((today - start).days)
+    elif t.result == 'Recapture':
+        start = t.datetimeadded.date()
+        end = t.datetimeresult.date()
+        days = abs((end - start).days)
+    elif t.result == 'Engaged':
+        today = datetime.date.today()
+        start = t.estart.date()
+        days = abs((today - start).days)
+    return days
+
+def cscore(e):
+    if e.result == 'Tracking':
+        score = 1
+    elif e.result == 'Recapture':
+        score = 2
+    elif e.result == 'Engaged':
+        score = 3
+    return score
+
 def chart_data(type):
     data = {}
     if type == 'doughnut':
@@ -437,45 +489,56 @@ def chart_data(type):
         while i < len(data['datasets']):
             data['datasets'][i]['backgroundColor'] = colors[i]
             i += 1
-        print('Bar Chart Data: ', data)
+        #print('Bar Chart Data: ', data)
         return data
 
     elif type == 'scatter':
-        print('getting data for scatter chart')
+        print('Generating BubblePlot Data')
+        trck = Leaver.query.filter_by(result='Tracking').all()
+        rcpt = Leaver.query.filter_by(result='Recapture').all()
+        engd = Leaver.query.filter_by(result='Engaged').all()
 
+        print('Lengths:')
+        print(len(trck))
+        print(len(rcpt))
+        print(len(engd))
 
-    # else:
-    #     data = {}
-    #     dough = {}
-    #     result_list = []
-    #     count_list = []
-    #     for result, count in db.session.query(Leaver.result, func.count(Leaver.id)).group_by(Leaver.result).all():
-    #         print('Users status %s: %d' % (result, count))
-    #         result_list.append(result)
-    #         count_list.append(count)
-    #     dough['labels'] = result_list
-    #     dough['datasets'] = count_list
-    #
-    #     bar = {}
-    #     df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
-    #     df.date = df.date.apply(lambda x: str(x).split(' ')[0])
-    #     df1 = df.groupby("date").count()
-    #     dfgroup = df1.reset_index()
-    #     lst = list(dfgroup.date)
-    #     date_list = lst
-    #     bar['labels'] = date_list
-    #     datasets = []
-    #     labels = ['Tracking', "Lost", "Inactive", "Recapture", "Lead", "TrackAlert"]
-    #     for l in labels:
-    #         dset = {}
-    #         members = db.session.query(Buckets).filter_by(status=l).all()
-    #         values = []
-    #         for m in members:
-    #             values.append(m.count)
-    #         dset[l] = values
-    #         datasets.append(dset)
-    #     bar['datasets'] = datasets
-    #
-    #     data['dough'] = dough
-    #     data['bar'] = bar
-    #     return data
+        dlst = []
+
+        for t in trck:
+            d={}
+            #d['name'] = t.name
+            #d['id'] = t.id
+            d['y'] = cscore(t)
+            d['x'] = day_count(t)
+            d['r'] = role_score(t)
+            #d['r'] = t.result
+            dlst.append(d)
+        for r in rcpt:
+            d={}
+            #d['name'] = r.name
+            #d['id'] = r.id
+            d['y'] = cscore(r)
+            d['x'] = day_count(r)
+            d['r'] = role_score(r)
+            #d['r'] = r.result
+            dlst.append(d)
+        for e in engd:
+            d={}
+            #d['name'] = r.name
+            #d['id'] = r.id
+            d['y'] = cscore(e)
+            d['x'] = day_count(e)
+            d['r'] = role_score(e)
+            #d['r'] = e.result
+            dlst.append(d)
+
+        print('dlst: ', dlst)
+        # bcd = {}
+        # bcd['yLabels'] = ['Test', 'Tracking', 'Recapture', 'Engaged']
+        # bcd['datasets'] = []
+        # dct = {}
+        # dct['data'] = dlst
+        # bcd['datasets'].append(dct)
+        # print('final bubble data: ', bcd)
+        return dlst

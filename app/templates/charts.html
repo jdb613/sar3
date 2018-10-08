@@ -2,9 +2,23 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
 <script>
+    var jitter = function(data) {
+    return data.map(function(e) {
+      var xJitter = Math.random() * (-1 - 1) + 1;
+      var yJitter = Math.random() * (-1 - 1) + 1;
+
+      return {
+        x: e.x + xJitter,
+        y: e.y + yJitter,
+      }
+    });
+    };
 $(document).ready(function(){
   var newchart1=null;
   var newchart2=null;
+  var newchart3=null;
+
+
     $.getJSON( '/chartgenerator', function( response ) {
       console.log(response);
       var data1 = response.A;
@@ -45,7 +59,87 @@ $(document).ready(function(){
         }
             }
         });
+        var data3 = response.C;
+        console.log(data3);
+        Chart.defaults.global.defaultFontColor = 'rgb(0,0,0)'
+          var bubbleBackgroundColor = function() {
+                    return 'rgb(0,128,0)'
+          };
+          var bubbleBorderColor = function() {
+                    return 'rgb(0,0,255)'
+          };
 
+          var bubbleChartData = {
+            // Documentation says the tick values tick.min & tick.max must be in the Labels array. So thats what I have below
+            yLabels:  ['Test', 'Tracking', 'Recapture', 'Engaged'],
+            datasets: [{
+              label: "Leaver",
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: bubbleBackgroundColor(),
+              borderColor: bubbleBorderColor(),
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(153, 102, 155, 0.2)",
+              pointHoverBorderColor: "rgba(153, 102, 155, 1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              // how would the data change ...how can the numbers for y be replaced with strings
+
+              // data: jitter(data3)
+              data: data3
+            }]
+          };
+
+
+          var ctx = document.getElementById('schart');
+          var bubble = new Chart(ctx, {
+            type: 'bubble',
+            data: bubbleChartData,
+            options: {
+              responsive: true,
+              title: {
+                display: true,
+                text:'Aging Report'
+              },
+                scales: {
+                  yAxes: [{
+                    display: true,
+                    ticks: {
+                      beginAtZero:true,
+                      stepSize : 1,
+                      // min: 0,
+                      max: 5,
+                      padding: 80,
+                      callback:function(value) {
+                        var x = ["", "Tracking", "Recapture", "Engaged", ""];
+                        return x[value | 0];
+                        }
+                    }
+                      // will this create y-axis with days of week?
+                      // type: 'category',
+                      // position: 'left',
+                      // ticks: {
+                      //   min: "Test",
+                      //   max: "Engaged"
+                      // }
+                  }],
+                  xAxes: [{
+                    ticks: {
+                    padding: 80
+                }
+                  }]
+                }
+
+            }
+          });
     });
 
     // function drawdough() {
@@ -177,6 +271,9 @@ $(document).ready(function(){
                 </div>
                 <div class="card-body" id="bchartdiv">
                     <canvas id="bchart" width="600" height="400"></canvas>
+                </div>
+                <div class="card-body" id="schartdiv">
+                    <canvas id="schart" width="800" height="400"></canvas>
                 </div>
             </div>
         </div>

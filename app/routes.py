@@ -385,3 +385,8 @@ def register():
             flash('Congratulations, you are now a registered user!')
             return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=regform)
+
+@app.route('/testing', methods=['GET', 'POST'])
+def testing():
+
+    return render_template('bokehtesting.html', title='Testing')
