@@ -23,7 +23,7 @@
       $.getJSON( '/ajax', { 'data' : selection } , function( response ) {
         // console.log(response);
         console.log(response.B.length);
-        var trHTML = '<thead class="thead-light"><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>Location</th><th>Link</th></tr></thead><tbody>';
+        var trHTML = '<thead class="thead-light"><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>Location</th><th>Link</th><th>Action</th></tr></thead><tbody>';
         var cardHTML = '<div id="PROS"><div class="card-body"><div class="text-center"><h5 class="card-title">PROS Record</h5><ul class="list-inline"><li class="list-inline-item list-group-item-primary">Name: ';
             cardHTML += response.A['leavername'] + '<li class="list-inline-item list-group-item-dark">Role: '
                       + response.A['leaverrole'] + '<li class="list-inline-item list-group-item-primary">Firm: '
@@ -236,7 +236,7 @@
               <div class="col-md-2">
               </div>
               <div class="col-md-8">
-                <div id="comparecard" class="card bg-light text-dark border-primary">
+                <div id="comparecard" class="card sm-light text-dark border-primary">
                     <!-- Card data populated here -->
 
                   </div>
@@ -250,7 +250,7 @@
             <div class="col-md-1">
               </div>
           <div class="col-md-10">
-            <table id="result123" class="table table-hover">
+            <table id="result123" class="table table-hover table-sm">
 
             </table>
           </div>

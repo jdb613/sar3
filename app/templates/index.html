@@ -330,43 +330,99 @@ $(document).ready(function(){
      // });
 
 </script>
+<style>
+.table {
+  font-size: 10px;
+  table-layout: fixed;
+}
 
+.table tr,.table td {
+   height: 10px;
+   text-align: center
+}
+td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>
 
 
 <p align="right">Logged In: {{ current_user.name }}</p>
-<p>TAG <b>leaverslead</b> If Lead Entered</p>
-<div>
-<h3>TrackAlerts</h3>
-<p>LinkedIn Profile Changes Detected</p>
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+    <p class="text-center"><b>leaverslead</b> TAG If Lead Entered</p>
+<h3 class="text-center">TrackAlerts</h3>
+<p class="text-center">LinkedIn Profile Changes Detected</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
 
 <div>
-  <table id="LEADtable" class="table table-hover table-dark">
+<h3></h3>
+<p></p>
+
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-10">
+  <table id="LEADtable" class="table table-hover table-sm table-hover-cursor">
 
 
         </table>
-  </div>
-</div>
+      </div>
+      <div class="col-sm-1">
+      </div>
+      </div>
 <br>
-<div>
-<h3>Dropped from LJFT Bucket</h3>
-<p>The Users Below are NO LONGER in the LJFT Shell.</p>
-  <div>
-    <table id="DROPtable" class="table table-hover table-dark">
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+<h3 class="text-center">Dropped from LJFT Bucket</h3>
+<p class="text-center">The Users Below are NO LONGER in the LJFT Shell.</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
+    <div class="row">
+      <div class="col-sm-1">
+      </div>
+      <div class="col-sm-10">
+
+    <table id="DROPtable" class="table table-hover table-sm">
 
           </table>
+          </div>
+          <div class="col-sm-1">
+          </div>
     </div>
-</div>
 <br>
-<div>
-<h3>Engagements</h3>
-<p>Actively Selling to These Users</p>
-<div>
-  <table id="ENGAGEtable" class="table table-hover table-dark">
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+<h3 class="text-center">Engagements</h3>
+<p class="text-center">Actively Selling to These Users</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-10">
+  <table id="ENGAGEtable" class="table table-hover table-sm">
 
 
         </table>
-  </div>
-</div>
+      </div>
+      <div class="col-sm-1">
+      </div>
+    </div>
 
   <script>
 

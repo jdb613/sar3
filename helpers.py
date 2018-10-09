@@ -89,7 +89,7 @@ def proslinkgen(num):
     return link
 
 def gen_trackalert_table(trackalert_list):
-    ta_headers = str('<thead><tr><th>ID</th>'
+    ta_headers = str('<thead class="thead-light"><tr><th>ID</th>'
                 + '<th>Name</th>'
                 + '<th>Old Role</th>'
                 + '<th>Old Firm</th>'
@@ -108,12 +108,12 @@ def gen_trackalert_table(trackalert_list):
         + str(item['leavername']) + '</td><td>'
         + str(item['leaverrole']) + '</td><td>'
         + str(item['leaverfirm']) + '</td><td>'
-        + str(item['trackrole']) + '</td><td>'
+        + str(item['trackrole']) + '</td><td class="text-truncate">'
         + str(item['trackfirm']) + '</td><td>'
         + str(item['leaverlocation']) + '</td><td><a target="_blank" href="'
         + str(item['leaverlink']) + ' ">LinkedIn</a></td><td>"'
-        + str(item['trackend']) + ' "</td><td><div class="dropdown"><div class="btn-group">'
-        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + item['trackend'] + ' "</td><td><div class="dropdown"><div class="btn-group">'
+        + '<button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
@@ -126,7 +126,7 @@ def gen_trackalert_table(trackalert_list):
     return(table)
 
 def gen_engagement_table(elist):
-    ta_headers = str('<thead><tr><th>ID</th>'
+    ta_headers = str('<thead class="thead-light"><tr><th>ID</th>'
                 + '<th>Name</th>'
                 + '<th>Tracking Role</th>'
                 + '<th>Tracking Firm</th>'
@@ -149,7 +149,7 @@ def gen_engagement_table(elist):
         + str(item['eduration']) + '</td><td><a target="_blank" href="'
         + str(item['elink']) + ' ">LinkedIn</a></td><td>'
         + '<div class="dropdown"><div class="btn-group">'
-        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + '<button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
@@ -162,7 +162,7 @@ def gen_engagement_table(elist):
     return(table)
 
 def gen_dropped_table(drop_list):
-    drop_headers = str('<thead><tr>'
+    drop_headers = str('<thead class="thead-light"><tr>'
                         + '<th>ID</th>'
                         + '<th>Name</th>'
                         + '<th>Role</th>'
@@ -178,7 +178,7 @@ def gen_dropped_table(drop_list):
         + str(item['prosrole']) + '</td><td>'
         + str(item['prosfirm']) + '</td><td>'
         + str(item['proslink']) + ' </td><td><div class="dropdown"><div class="btn-group">'
-        + '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+        + '<button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
@@ -258,7 +258,10 @@ def actionfill(flag):
         ENG_Confirm = Leaver.query.filter_by(result='Engaged', repcode=current_user.repcode).all()
 
         for l in TA_Confirm:
-            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'trackend': l.trackend, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
+            dte = l.trackend.date()
+            tedate = dte.strftime("%m-%d-%Y")
+            print(tedate)
+            TA_dict = {'leavername': l.name, 'leaverfirm': l.leaverfirm, 'leaverrole': l.leaverrole, 'leaverid': l.id, 'trackend': tedate, 'leaverlocation': l.leaverlocation, 'leaverlink': l.link, 'trackfirm': l.trackfirm, 'trackrole': l.trackrole}
             TA_list.append(TA_dict)
         ta_table = gen_trackalert_table(TA_list)
         parentdict['B'] = ta_table
