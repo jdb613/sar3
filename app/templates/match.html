@@ -9,7 +9,7 @@
                 console.log(response);
               // Remove old options
               $('#navdrop1').find('option').remove();
-              var trHTML = '<option value="Select Leaver"</option>';
+              var trHTML = '<option value="">Select Leaver</option>';
               // Add new items
               for(var f=0;f<response.length;f++) {
                 trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
@@ -209,11 +209,23 @@
 
             });
 
-
-
-
   </script>
+  <style>
+  .table {
+    font-size: 10px;
+    table-layout: fixed;
+  }
 
+  .table tr,.table td {
+     height: 10px;
+     text-align: center
+  }
+  td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  </style>
 
   <div class="row">
   <!-- <div class="container-fluid"> -->

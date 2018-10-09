@@ -380,7 +380,12 @@ def fillselect(leavers):
             leaver_dict.append(s_dict)
     return leaver_dict
 
+def gen_card_html(card, list):
+    card_html = '<div id="PROS"><div class="card-body"><div class="text-center"><h5 class="card-title">PROS Record</h5><ul class="list-inline"><li class="list-inline-item list-group-item-primary">Name: '
+    + card['leavername'] + '<li class="list-inline-item list-group-item-dark">Role: '
 
+
+    return a, b
 #populates dictionary for suspect table on fillselect selection AND comparison card
 def populate_table(thing):
     l = Leaver.query.filter_by(id=thing).first()
@@ -388,10 +393,12 @@ def populate_table(thing):
     parentdict = {}
     susp_list = []
     leaverdict = {'leavername': l.name, 'leaverfirm': l.prosfirm, 'leaverrole': l.prosrole, 'leavertime': ddate}
+    card_html = gen_card_html(leaverdict)
     suspects = Suspect.query.filter_by(leaverid=thing, result=None).all()
     for s in suspects:
         s_dict = {'ident': s.id, 'name': s.name, 'link': s.slink, 'role': s.srole, 'firm':s.sfirm, 'location': s.slocation}
         susp_list.append(s_dict)
+    card_html, table_html = gen_card_html(leaverdict)
     parentdict['A'] = leaverdict
     parentdict['B'] = susp_list
     return parentdict
