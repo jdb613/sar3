@@ -327,7 +327,9 @@ def concat(a, b):
 
 #translates excel file to pandas df passing rows to pd2class
 def processfile(file):
-    data_xls = pd.read_excel(file)
+    data_xls = pd.read_excel(file, header=0, names=['prosshell#','proscontact#','first','last','repcode','teamcode','role','firm'])
+    data_xls['repcode'] = 'JBUH'
+    data_xls['teamcode'] = 'HF3'
     try:
         data_xls["name"] = data_xls["first"] + ' ' + data_xls["last"]
         data_xls = data_xls.drop('first', 1)

@@ -23,12 +23,12 @@
       $.getJSON( '/ajax', { 'data' : selection } , function( response ) {
         // console.log(response);
         console.log(response.B.length);
-        var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>Location</th><th>Link</th></tr></thead><tbody>';
-        var cardHTML = '<div id="PROS"><div class="card-body"><div class="text-center"><h5 class="card-title">PROS Record</h5></div><ul class="list-group list-group-flush"><li class="list-group-item">Name: ';
-            cardHTML += response.A['leavername'] + '<li class="list-group-item">Role: '
-                      + response.A['leaverrole'] + '</li><li class="list-group-item">Firm: '
-                      + response.A['leaverfirm'] + '</li><li class="list-group-item">Date Added: '
-                      + response.A['leavertime'] + '</li></ul></div>';
+        var trHTML = '<thead class="thead-light"><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>Location</th><th>Link</th></tr></thead><tbody>';
+        var cardHTML = '<div id="PROS"><div class="card-body"><div class="text-center"><h5 class="card-title">PROS Record</h5><ul class="list-inline"><li class="list-inline-item list-group-item-primary">Name: ';
+            cardHTML += response.A['leavername'] + '<li class="list-inline-item list-group-item-dark">Role: '
+                      + response.A['leaverrole'] + '<li class="list-inline-item list-group-item-primary">Firm: '
+                      + response.A['leaverfirm'] + '<li class="list-inline-item list-group-item-dark">Date Added: '
+                      + response.A['leavertime'] + '</li></ul></div></div>';
 
         for(var f=0;f<response.B.length;f++) {
           console.log(f);
@@ -215,8 +215,8 @@
   </script>
 
 
-
-  <div class="container-fluid">
+  <div class="row">
+  <!-- <div class="container-fluid"> -->
             <div class="col-md-3">
               <select name="navdrop" id="navdrop1">
 
@@ -224,22 +224,37 @@
               </select>
 
               </div>
+
               <div class="col-md-6">
                 <h2 class="text-center">Step 2: Track</h2>
                 <h6 class="text-center"> Match LinkedIn Profile Summary to PROS Data</h6>
               </div>
               <div class="col-md-3">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8">
                 <div id="comparecard" class="card bg-light text-dark border-primary">
                     <!-- Card data populated here -->
 
                   </div>
                 </div>
-            </div>
+                <div class="col-md-2">
+                </div>
+            <!-- </div> -->
+          </div>
 
+          <div class="row">
+            <div class="col-md-1">
+              </div>
+          <div class="col-md-10">
+            <table id="result123" class="table table-hover">
 
-    <table id="result123" class="table table-hover table-dark">
-
-          </table>
-
+            </table>
+          </div>
+          <div class="col-md-1">
+          </div>
 
 {% endblock %}

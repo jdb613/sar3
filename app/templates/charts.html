@@ -4,12 +4,14 @@
 <script>
     var jitter = function(data) {
     return data.map(function(e) {
-      var xJitter = Math.random() * (-1 - 1) + 1;
-      var yJitter = Math.random() * (-1 - 1) + 1;
-
+      // var xJitter = Math.random() * (-1 - 1) + 1;
+      // var yJitter = Math.random() * (-1 - 1) + 1;
+      var xJitter = Math.random() * (-.5 - .5) + 1;
+      var yJitter = Math.random() * (-.5 - .5) + 1;
       return {
         x: e.x + xJitter,
         y: e.y + yJitter,
+        z: e.z,
       }
     });
     };
@@ -61,7 +63,7 @@ $(document).ready(function(){
         });
         var data3 = response.C;
         console.log(data3);
-        Chart.defaults.global.defaultFontColor = 'rgb(0,0,0)'
+        Chart.defaults.global.defaultFontColor = 'rgb(0,0,255)'
           var bubbleBackgroundColor = function() {
                     return 'rgb(0,128,0)'
           };

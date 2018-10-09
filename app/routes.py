@@ -185,6 +185,7 @@ def upload():
             db.session.commit()
             exit = exitpros()
             print('Status of outprosshell update: ', exit)
+            flash('Upload Successful')
             return redirect(url_for('match'))
         else:
             flash('Excel Upload Failed. Please Check Fields.')
