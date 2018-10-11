@@ -101,6 +101,7 @@ def gen_engagement_table(elist):
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
+        '<li><a class="dropdown-item" href="#">Last Touch Date</a></li>'
         + '<li><a class="dropdown-item" href="#">Lost Business</a></li>'
         + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
         + '<li><a class="dropdown-item" href="#">Delayed Trial</a></li>'
