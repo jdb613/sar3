@@ -4,213 +4,245 @@
 {% block content %}
 <script>
   $(document).ready(function() {
-            // LOAD DROPDOWN //
-    $.getJSON( '/ndrop', function( response ) {
-                console.log(response);
+// LOAD DROPDOWN //
+    $.getJSON( '/ajax', { 'action' :  'fillselect'} , function( response ) {
+                console.log(response.A);
               // Remove old options
               $('#navdrop1').find('option').remove();
-              var trHTML = '<option value="">Select Leaver</option>';
-              // Add new items
-              for(var f=0;f<response.length;f++) {
-                trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
-              }
-              console.log(trHTML);
-                $('#navdrop1').append(trHTML);
+              var drop_HTML = response.A
+              console.log(drop_HTML);
+                $('#navdrop1').append(drop_HTML);
               });
-              // REACT To DROPDOWN //
-    $("#navdrop1").on('change', function() {
+// REACT To DROPDOWN //
+  $("#navdrop1").on('change', function() {
       var selection = $('#navdrop1').val();
-      $.getJSON( '/ajax', { 'data' : selection } , function( response ) {
-        // console.log(response);
-        console.log(response.B.length);
-        var trHTML = '<thead class="thead-light"><tr><th>ID</th><th>Name</th><th>Role</th><th>Firm</th><th>Location</th><th>Link</th><th>Action</th></tr></thead><tbody>';
-        var cardHTML = '<div id="PROS"><div class="card-body"><div class="text-center"><h5 class="card-title">PROS Record</h5><ul class="list-inline"><li class="list-inline-item list-group-item-primary">Name: ';
-            cardHTML += response.A['leavername'] + '<li class="list-inline-item list-group-item-dark">Role: '
-                      + response.A['leaverrole'] + '<li class="list-inline-item list-group-item-primary">Firm: '
-                      + response.A['leaverfirm'] + '<li class="list-inline-item list-group-item-dark">Date Added: '
-                      + response.A['leavertime'] + '</li></ul></div></div>';
+      console.log("Dropdown Selection Made: ", selection);
+    $.getJSON( '/ajax', { 'data' : selection, 'action': 'selectactioned' } , function( response ) {
 
-        for(var f=0;f<response.B.length;f++) {
-          console.log(f);
-          trHTML += '<tr><td>'
-                    + response.B[f].ident + '</td><td>'
-                    + response.B[f].name + '</td><td>'
-                    + response.B[f].role + '</td><td>'
-                    + response.B[f].firm+ '</td><td>'
-                    + response.B[f].location + '</td><td><a target="_blank" href="'
-                    + response.B[f].link + ' ">LinkedIn</a></td><td>'
-                    + '<button class="btnSelect1">Lead</button>'
-                    + '<button class="btnSelect2">Track</button>'
-                    + '<button class="btnSelect3">Recapture</button>'
-                    + '<button class="btnSelect5">Left Industry</button>'
-                    + '<button class="btnSelect4">Remove</button></td></tr>';
-            }
+      $('#result123').find('td').remove();
+      $('#comparecard').find("#PROS").remove();
 
-            trHTML += '</tbody>';
-            console.log(trHTML);
-            console.log(cardHTML);
-            $('#result123').html(trHTML);
-            $('#comparecard').html(cardHTML);
-            $( ".spin-grid" ).removeClass( "fa-spin" );
+        var card_HTML = response.B;
+        var table_HTML = response.C;
 
-          });
+        console.log("Card HTML", card_HTML);
+        console.log("Table HTML", table_HTML);
+
+
+
+        $('#result123').html(table_HTML);
+        $('#comparecard').html(card_HTML);
+        $( ".spin-grid" ).removeClass( "fa-spin" );
 
       });
+    });
+  });
+
+$(document).on('click', 'li', function(){
+    var chosen = $(this).parents('.dropdown').find('button').text($(this).text());
+    var txt = chosen.text();
+
+    // var selection = $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+    console.log("Button Dropdown Selection: ", txt);
+    $.bootstrapGrowl(txt, {
+        ele: 'body',
+        type: 'success',
+        offset: {from: 'top', amount: 20},
+        align: 'right'
+      });
+
+    var id = $(this).closest("tr").children().first().html();
+    console.log("ID Associated with Selection: ", id);
+
+    $.getJSON( '/sorter', { 'id' : id, 'selection': txt} , function( response ) {
+      var resp_msg = response.D;
+      console.log("Response from /sorter: ", resp_msg);
+
+          if (resp_msg === 'partial') {
+            $('result123').find('td').remove();
+              var table_HTML = response.C;
+              $('#result123').html(table_HTML);
+              $( ".spin-grid" ).removeClass( "fa-spin" );
+          }else if (resp_msg === 'full') {
+            $('#result123').find('td').remove();
+            $('#comparecard').find("#PROS").remove();
+            $('#navdrop1').find('option').remove();
+              var drop_HTML = response.A;
+              console.log(drop_HTML);
+              $('#navdrop1').append(drop_HTML);
+             $( ".spin-grid" ).removeClass( "fa-spin" );
+           }
+          });
+        });
 
       // Lead BUTTON CLICK //
 
-      $("#result123").on('click','.btnSelect1',function(){
-           // get the current row
-           var currentRow=$(this).closest("tr");
+//       $("#result123").on('click','.btnSelect1',function(){
+//            // get the current row
+//            var currentRow=$(this).closest("tr");
+//
+//            var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+//
+//       $.getJSON( '/leadclick', { 'data' : col1 } , function( response ) {
+//         $.bootstrapGrowl("Lead Selected", {
+//             ele: 'body',
+//             type: 'success',
+//             offset: {from: 'top', amount: 20},
+//             align: 'right'
+//           });
+//           $('#result123').find('td').remove();
+//           $('#navdrop1').find('option').remove();
+//           $('#comparecard').find("#PROS").remove();
+//           var trHTML = '';
+//           // Add new items
+//           for(var f=0;f<response.length;f++) {
+//             trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
+//           }
+//           console.log(trHTML);
+//             $('#navdrop1').append(trHTML);
+//
+//         });
+//         });
+//
+// // Track BUTTON CLICK //
+//
+//         $("#result123").on('click','.btnSelect2',function(){
+//              // get the current row
+//              var currentRow=$(this).closest("tr");
+//
+//              var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+//
+//         $.getJSON( '/trackclick', { 'data' : col1 } , function( response ) {
+//           $.bootstrapGrowl("Tracking Leaver", {
+//               ele: 'body',
+//               type: 'success',
+//               offset: {from: 'top', amount: 20},
+//               align: 'right'
+//             });
+//             $('#result123').find('td').remove();
+//             $('#navdrop1').find('option').remove();
+//             $('#comparecard').find("#PROS").remove();
+//
+//             var trHTML = '<option value="Select Leaver"</option>';
+//             // Add new items
+//             for(var f=0;f<response.length;f++) {
+//               trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
+//             }
+//             console.log(trHTML);
+//               $('#navdrop1').append(trHTML);
+//
+//           });
+//           });
+//
+//           // I PLACED BUTTON CLICK //
+//
+//           $("#result123").on('click','.btnSelect3',function(){
+//                // get the current row
+//                var currentRow=$(this).closest("tr");
+//
+//                var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+//
+//           $.getJSON( '/placeclick', { 'data' : col1 } , function( response ) {
+//             $.bootstrapGrowl("You Will Move the Leader and Tag with SAR", {
+//                 ele: 'body',
+//                 type: 'success',
+//                 offset: {from: 'top', amount: 20},
+//                 align: 'right'
+//               });
+//               $('#result123').find('td').remove();
+//               $('#comparecard').find("#PROS").remove();
+//               $('#navdrop1').find('option').remove();
+//                 var drop_HTML = response.A;
+//                 console.log(drop_HTML);
+//                 $('#navdrop1').append(drop_HTML);
+//               $('#comparecard').find("#PROS").remove();
+//
+//               var trHTML = '<option value="Select Leaver"</option>';
+//               // Add new items
+//               for(var f=0;f<response.length;f++) {
+//                 trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
+//               }
+//               console.log(trHTML);
+//                 $('#navdrop1').append(trHTML);
+//
+//             });
+//             });
+//
+//             // Rep PLACED BUTTON CLICK //
+//             $("#result123").on('click','.btnSelect5',function(){
+//                  // get the current row
+//                  var currentRow=$(this).closest("tr");
+//
+//                  var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+//
+//             $.getJSON( '/repclick', { 'data' : col1 } , function( response ) {
+//               $.bootstrapGrowl("Confirmed: New Rep Moved Leaver", {
+//                   ele: 'body',
+//                   type: 'success',
+//                   offset: {from: 'top', amount: 20},
+//                   align: 'right'
+//                 });
+//                 $('#result123').find('td').remove();
+//                 $('#navdrop1').find('option').remove();
+//                 $('#comparecard').find("#PROS").remove();
+//                 var trHTML = '';
+//                 // Add new items
+//                 for(var f=0;f<response.length;f++) {
+//                   trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
+//                 }
+//                 console.log(trHTML);
+//                   $('#navdrop1').append(trHTML);
+//
+//               });
+//               });
+//
+//             // DELETE BUTTON CLICK //
+//           $("#result123").on('click','.btnSelect4',function(){
+//                // get the current row
+//                var currentRow=$(this).closest("tr");
+//
+//                var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+//
+//           $.getJSON( '/removeclick', { 'data' : col1 } , function( response ) {
+//             $.bootstrapGrowl("Suspect Removed", {
+//                 ele: 'body',
+//                 type: 'success',
+//                 offset: {from: 'top', amount: 20},
+//                 align: 'right'
+//               });
+//               $('#result123').find('td').remove();
+//               var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Link</th></tr></thead><tbody>';
+//               for(var f=0;f<response.length;f++) {
+//                 trHTML += '<tr><td>'
+//                           + response[f].ident + '</td><td>'
+//                           + response[f]['name'] + '</td><td>'
+//                           + response[f]['role'] + '</td><td>'
+//                           + response[f]['firm'] + '</td><td>'
+//                           + response[f]['location'] + '</td><td><a target="_blank" href="'
+//                           + response[f]['link'] + ' ">LinkedIn</a></td><td><button class="btnSelect1">Lead</button><button class="btnSelect2">Track</button><button class="btnSelect3">Recapture</button><button class="btnSelect5">Left Industry</button><button class="btnSelect4">Remove</button></td></tr>';
+//                   }
+//                   trHTML += '</tbody>';
+//                   console.log(trHTML);
+//                   $('#result123').html(trHTML);
+//                   $( ".spin-grid" ).removeClass( "fa-spin" );
+//
+//                 });
+//               });
 
-           var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
 
-      $.getJSON( '/leadclick', { 'data' : col1 } , function( response ) {
-        $.bootstrapGrowl("Lead Selected", {
-            ele: 'body',
-            type: 'success',
-            offset: {from: 'top', amount: 20},
-            align: 'right'
-          });
-          $('#result123').find('td').remove();
-          $('#navdrop1').find('option').remove();
-          $('#comparecard').find("#PROS").remove();
-          var trHTML = '';
-          // Add new items
-          for(var f=0;f<response.length;f++) {
-            trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
-          }
-          console.log(trHTML);
-            $('#navdrop1').append(trHTML);
-
-        });
-        });
-
-// Track BUTTON CLICK //
-
-        $("#result123").on('click','.btnSelect2',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
-
-             var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-
-        $.getJSON( '/trackclick', { 'data' : col1 } , function( response ) {
-          $.bootstrapGrowl("Tracking Leaver", {
-              ele: 'body',
-              type: 'success',
-              offset: {from: 'top', amount: 20},
-              align: 'right'
-            });
-            $('#result123').find('td').remove();
-            $('#navdrop1').find('option').remove();
-            $('#comparecard').find("#PROS").remove();
-
-            var trHTML = '<option value="Select Leaver"</option>';
-            // Add new items
-            for(var f=0;f<response.length;f++) {
-              trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
-            }
-            console.log(trHTML);
-              $('#navdrop1').append(trHTML);
-
-          });
-          });
-
-          // I PLACED BUTTON CLICK //
-
-          $("#result123").on('click','.btnSelect3',function(){
-               // get the current row
-               var currentRow=$(this).closest("tr");
-
-               var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-
-          $.getJSON( '/placeclick', { 'data' : col1 } , function( response ) {
-            $.bootstrapGrowl("You Will Move the Leader and Tag with SAR", {
-                ele: 'body',
-                type: 'success',
-                offset: {from: 'top', amount: 20},
-                align: 'right'
-              });
-              $('#result123').find('td').remove();
-              $('#navdrop1').find('option').remove();
-              $('#comparecard').find("#PROS").remove();
-
-              var trHTML = '<option value="Select Leaver"</option>';
-              // Add new items
-              for(var f=0;f<response.length;f++) {
-                trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
-              }
-              console.log(trHTML);
-                $('#navdrop1').append(trHTML);
-
-            });
-            });
-
-            // Rep PLACED BUTTON CLICK //
-            $("#result123").on('click','.btnSelect5',function(){
-                 // get the current row
-                 var currentRow=$(this).closest("tr");
-
-                 var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-
-            $.getJSON( '/repclick', { 'data' : col1 } , function( response ) {
-              $.bootstrapGrowl("Confirmed: New Rep Moved Leaver", {
-                  ele: 'body',
-                  type: 'success',
-                  offset: {from: 'top', amount: 20},
-                  align: 'right'
-                });
-                $('#result123').find('td').remove();
-                $('#navdrop1').find('option').remove();
-                $('#comparecard').find("#PROS").remove();
-                var trHTML = '';
-                // Add new items
-                for(var f=0;f<response.length;f++) {
-                  trHTML += '<option value="' + response[f]['ident'] + '">' + response[f]['name'] + '</option>'
-                }
-                console.log(trHTML);
-                  $('#navdrop1').append(trHTML);
-
-              });
-              });
-
-            // DELETE BUTTON CLICK //
-          $("#result123").on('click','.btnSelect4',function(){
-               // get the current row
-               var currentRow=$(this).closest("tr");
-
-               var col1=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-
-          $.getJSON( '/removeclick', { 'data' : col1 } , function( response ) {
-            $.bootstrapGrowl("Suspect Removed", {
-                ele: 'body',
-                type: 'success',
-                offset: {from: 'top', amount: 20},
-                align: 'right'
-              });
-              $('#result123').find('td').remove();
-              var trHTML = '<thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Link</th></tr></thead><tbody>';
-              for(var f=0;f<response.length;f++) {
-                trHTML += '<tr><td>'
-                          + response[f].ident + '</td><td>'
-                          + response[f]['name'] + '</td><td>'
-                          + response[f]['role'] + '</td><td>'
-                          + response[f]['firm'] + '</td><td>'
-                          + response[f]['location'] + '</td><td><a target="_blank" href="'
-                          + response[f]['link'] + ' ">LinkedIn</a></td><td><button class="btnSelect1">Lead</button><button class="btnSelect2">Track</button><button class="btnSelect3">Recapture</button><button class="btnSelect5">Left Industry</button><button class="btnSelect4">Remove</button></td></tr>';
-                  }
-                  trHTML += '</tbody>';
-                  console.log(trHTML);
-                  $('#result123').html(trHTML);
-                  $( ".spin-grid" ).removeClass( "fa-spin" );
-
-                });
-              });
-
-            });
 
   </script>
   <style>
+  .table td.text {
+      max-width: 177px;
+  }
+  .table td.text span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      max-width: 100%;
+  }
   .table {
     font-size: 10px;
     table-layout: fixed;
@@ -219,11 +251,6 @@
   .table tr,.table td {
      height: 10px;
      text-align: center
-  }
-  td {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
   }
   </style>
 

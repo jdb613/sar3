@@ -3,231 +3,233 @@
 {% block content %}
 <script>
 $(document).ready(function(){
-    $.getJSON( '/actionitems', function( response ) {
-      console.log(response);
-      var trHTML = response.B
-      var drHTML = response.A
-      var erHTML = response.C
-          console.log(trHTML);
-          $('#LEADtable').html(trHTML);
+    $.getJSON( '/indexitems', function( response ) {
+      console.log("Response from /indexitems", response);
+
+      var track_HTML = response.A;
+      var drop_HTML = response.B;
+      var engage_HTML = response.C;
+
+          console.log("TrackAlert Table HTML", track_HTML);
+          $('#LEADtable').html(track_HTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
-          console.log(drHTML);
-          $('#DROPtable').html(drHTML);
+          console.log("Dropped Table HTML", drop_HTML);
+          $('#DROPtable').html(drop_HTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
-          console.log(erHTML);
-          $('#ENGAGEtable').html(erHTML);
+          console.log("Engaged Table HTML", engage_HTML);
+          $('#ENGAGEtable').html(engage_HTML);
           $( ".spin-grid" ).removeClass( "fa-spin" );
-          });
-          });
-
-
-    // user clicks confirm in table once they update users PROS record with new job info
-    $("#LEADtable").on('click','.lead',function(){
-         // get the current row
-         var currentRow=$(this).closest("tr");
-
-         var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-         console.log(id);
-
-         $.getJSON( '/confirm', { 'data' : id, 'action': 'Lead' } , function( response ) {
-           $.bootstrapGrowl("Lead Entry Confirmed", {
-               ele: 'body',
-               type: 'success',
-               offset: {from: 'top', amount: 20},
-               align: 'right'
-             });
-             $('#Leadtable').find('td').remove();
-             var trHTML = response.B
-                 console.log(trHTML);
-                 $('#LEADtable').html(trHTML);
-                 $( ".spin-grid" ).removeClass( "fa-spin" );
-
-           });
-         });
-
-
-         $("#LEADtable").on('click','.recapture',function(){
-              // get the current row
-              var currentRow=$(this).closest("tr");
-
-              var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-              console.log(id);
-
-              $.getJSON( '/confirm', { 'data' : id, 'action': 'Recapture' } , function( response ) {
-                $.bootstrapGrowl("Recapture Confirmed", {
-                    ele: 'body',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'right'
-                  });
-                  $('#LEADtable').find('td').remove();
-                  var trHTML = response.B
-                      console.log(trHTML);
-                      $('#LEADtable').html(trHTML);
-                      $( ".spin-grid" ).removeClass( "fa-spin" );
-
-                });
-         });
-
-         $("#LEADtable").on('click','.left',function(){
-              // get the current row
-              var currentRow=$(this).closest("tr");
-
-              var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-              console.log(id);
-
-              $.getJSON( '/confirm', { 'data' : id, 'action': 'Left' } , function( response ) {
-                $.bootstrapGrowl("Confirmed. User Left Industry", {
-                    ele: 'body',
-                    type: 'success',
-                    offset: {from: 'top', amount: 20},
-                    align: 'right'
-                  });
-                  $('#LEADtable').find('td').remove();
-                  var trHTML = response.B
-                      console.log(trHTML);
-                      $('#LEADtable').html(trHTML);
-                      $( ".spin-grid" ).removeClass( "fa-spin" );
-
-                });
-         });
-
-
-      $("#LEADtable").on('click','.error',function(){
-           // get the current row
-           var currentRow=$(this).closest("tr");
-
-           var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-           console.log(id);
-
-           $.getJSON( '/confirm', { 'data' : id, 'action': 'Error' } , function( response ) {
-             $.bootstrapGrowl("Resetting User's Information", {
-                 ele: 'body',
-                 type: 'success',
-                 offset: {from: 'top', amount: 20},
-                 align: 'right'
-               });
-               $('#LEADtable').find('td').remove();
-               var trHTML = response.B
-                   console.log(trHTML);
-                   $('#LEADtable').html(trHTML);
-                   $( ".spin-grid" ).removeClass( "fa-spin" );
-
-             });
+        });
       });
-      // user clicks confirm in table once they update users PROS record with new job info
-      // moved droppedout inactive
-
-      $("#DROPtable").on('click','.recapture',function(){
-           // get the current row
-           var currentRow=$(this).closest("tr");
-
-           var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-           console.log(id);
-
-           $.getJSON( '/dropclick', { 'data' : id, 'action': 'Recapture' } , function( response ) {
-             $.bootstrapGrowl("Recapture Confirmed", {
-                 ele: 'body',
-                 type: 'success',
-                 offset: {from: 'top', amount: 20},
-                 align: 'right'
-               });
-               $('#DROPtable').find('td').remove();
-               var trHTML = response.A
-                   console.log(trHTML);
-                   $('#DROPtable').html(trHTML);
-                   $( ".spin-grid" ).removeClass( "fa-spin" );
-                   });
-           });
-        $("#DROPtable").on('click','.lead',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
-
-             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-             console.log(id);
-
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Lead' } , function( response ) {
-               $.bootstrapGrowl("Lead Entry Confirmed", {
-                   ele: 'body',
-                   type: 'success',
-                   offset: {from: 'top', amount: 20},
-                   align: 'right'
-                 });
-                 $('#DROPtable').find('td').remove();
-                 var trHTML = response.A
-                     console.log(trHTML);
-                     $('#DROPtable').html(trHTML);
-                     $( ".spin-grid" ).removeClass( "fa-spin" );
-                     });
-        });
-
-        $("#DROPtable").on('click','.mtrack',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
-             var link=prompt("Please Enter Leavers LinkedIn Profile Link","Link");
-             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-             console.log(id);
-
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'mtrack', 'lnk': link } , function( response ) {
-               $.bootstrapGrowl("Tracking Leaver", {
-                   ele: 'body',
-                   type: 'success',
-                   offset: {from: 'top', amount: 20},
-                   align: 'right'
-                 });
-                 $('#DROPtable').find('td').remove();
-                 var trHTML = response.A
-                     console.log(trHTML);
-                     $('#DROPtable').html(trHTML);
-                     $( ".spin-grid" ).removeClass( "fa-spin" );
-                     });
-        });
 
 
-
-        $("#DROPtable").on('click','.left',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
-
-             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-             console.log(id);
-
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Left Industry' } , function( response ) {
-               $.bootstrapGrowl("Confirmed User Left Industry", {
-                   ele: 'body',
-                   type: 'success',
-                   offset: {from: 'top', amount: 20},
-                   align: 'right'
-                 });
-                 $('#DROPtable').find('td').remove();
-                 var trHTML = response.A
-                     console.log(trHTML);
-                     $('#DROPtable').html(trHTML);
-                     $( ".spin-grid" ).removeClass( "fa-spin" );
-                     });
-        });
-
-        $("#DROPtable").on('click','.inactive',function(){
-             // get the current row
-             var currentRow=$(this).closest("tr");
-
-             var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-             console.log(id);
-
-             $.getJSON( '/dropclick', { 'data' : id, 'action': 'Inactive' } , function( response ) {
-               $.bootstrapGrowl("Confirmed User is Inactive with No Clear Leads", {
-                   ele: 'body',
-                   type: 'success',
-                   offset: {from: 'top', amount: 20},
-                   align: 'right'
-                 });
-                 $('#DROPtable').find('td').remove();
-                 var trHTML = response.A
-                     console.log(trHTML);
-                     $('#DROPtable').html(trHTML);
-                     $( ".spin-grid" ).removeClass( "fa-spin" );
-                     });
-        });
+    // // user clicks confirm in table once they update users PROS record with new job info
+    // $("#LEADtable").on('click','.lead',function(){
+    //      // get the current row
+    //      var currentRow=$(this).closest("tr");
+    //
+    //      var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //      console.log(id);
+    //
+    //      $.getJSON( '/confirm', { 'data' : id, 'action': 'Lead' } , function( response ) {
+    //        $.bootstrapGrowl("Lead Entry Confirmed", {
+    //            ele: 'body',
+    //            type: 'success',
+    //            offset: {from: 'top', amount: 20},
+    //            align: 'right'
+    //          });
+    //          $('#Leadtable').find('td').remove();
+    //          var trHTML = response.B
+    //              console.log(trHTML);
+    //              $('#LEADtable').html(trHTML);
+    //              $( ".spin-grid" ).removeClass( "fa-spin" );
+    //
+    //        });
+    //      });
+    //
+    //
+    //      $("#LEADtable").on('click','.recapture',function(){
+    //           // get the current row
+    //           var currentRow=$(this).closest("tr");
+    //
+    //           var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //           console.log(id);
+    //
+    //           $.getJSON( '/confirm', { 'data' : id, 'action': 'Recapture' } , function( response ) {
+    //             $.bootstrapGrowl("Recapture Confirmed", {
+    //                 ele: 'body',
+    //                 type: 'success',
+    //                 offset: {from: 'top', amount: 20},
+    //                 align: 'right'
+    //               });
+    //               $('#LEADtable').find('td').remove();
+    //               var trHTML = response.B
+    //                   console.log(trHTML);
+    //                   $('#LEADtable').html(trHTML);
+    //                   $( ".spin-grid" ).removeClass( "fa-spin" );
+    //
+    //             });
+    //      });
+    //
+    //      $("#LEADtable").on('click','.left',function(){
+    //           // get the current row
+    //           var currentRow=$(this).closest("tr");
+    //
+    //           var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //           console.log(id);
+    //
+    //           $.getJSON( '/confirm', { 'data' : id, 'action': 'Left' } , function( response ) {
+    //             $.bootstrapGrowl("Confirmed. User Left Industry", {
+    //                 ele: 'body',
+    //                 type: 'success',
+    //                 offset: {from: 'top', amount: 20},
+    //                 align: 'right'
+    //               });
+    //               $('#LEADtable').find('td').remove();
+    //               var trHTML = response.B
+    //                   console.log(trHTML);
+    //                   $('#LEADtable').html(trHTML);
+    //                   $( ".spin-grid" ).removeClass( "fa-spin" );
+    //
+    //             });
+    //      });
+    //
+    //
+    //   $("#LEADtable").on('click','.error',function(){
+    //        // get the current row
+    //        var currentRow=$(this).closest("tr");
+    //
+    //        var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //        console.log(id);
+    //
+    //        $.getJSON( '/confirm', { 'data' : id, 'action': 'Error' } , function( response ) {
+    //          $.bootstrapGrowl("Resetting User's Information", {
+    //              ele: 'body',
+    //              type: 'success',
+    //              offset: {from: 'top', amount: 20},
+    //              align: 'right'
+    //            });
+    //            $('#LEADtable').find('td').remove();
+    //            var trHTML = response.B
+    //                console.log(trHTML);
+    //                $('#LEADtable').html(trHTML);
+    //                $( ".spin-grid" ).removeClass( "fa-spin" );
+    //
+    //          });
+    //   });
+    //   // user clicks confirm in table once they update users PROS record with new job info
+    //   // moved droppedout inactive
+    //
+    //   $("#DROPtable").on('click','.recapture',function(){
+    //        // get the current row
+    //        var currentRow=$(this).closest("tr");
+    //
+    //        var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //        console.log(id);
+    //
+    //        $.getJSON( '/dropclick', { 'data' : id, 'action': 'Recapture' } , function( response ) {
+    //          $.bootstrapGrowl("Recapture Confirmed", {
+    //              ele: 'body',
+    //              type: 'success',
+    //              offset: {from: 'top', amount: 20},
+    //              align: 'right'
+    //            });
+    //            $('#DROPtable').find('td').remove();
+    //            var trHTML = response.A
+    //                console.log(trHTML);
+    //                $('#DROPtable').html(trHTML);
+    //                $( ".spin-grid" ).removeClass( "fa-spin" );
+    //                });
+    //        });
+    //     $("#DROPtable").on('click','.lead',function(){
+    //          // get the current row
+    //          var currentRow=$(this).closest("tr");
+    //
+    //          var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //          console.log(id);
+    //
+    //          $.getJSON( '/dropclick', { 'data' : id, 'action': 'Lead' } , function( response ) {
+    //            $.bootstrapGrowl("Lead Entry Confirmed", {
+    //                ele: 'body',
+    //                type: 'success',
+    //                offset: {from: 'top', amount: 20},
+    //                align: 'right'
+    //              });
+    //              $('#DROPtable').find('td').remove();
+    //              var trHTML = response.A
+    //                  console.log(trHTML);
+    //                  $('#DROPtable').html(trHTML);
+    //                  $( ".spin-grid" ).removeClass( "fa-spin" );
+    //                  });
+    //     });
+    //
+    //     $("#DROPtable").on('click','.mtrack',function(){
+    //          // get the current row
+    //          var currentRow=$(this).closest("tr");
+    //          var link=prompt("Please Enter Leavers LinkedIn Profile Link","Link");
+    //          var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //          console.log(id);
+    //
+    //          $.getJSON( '/dropclick', { 'data' : id, 'action': 'mtrack', 'lnk': link } , function( response ) {
+    //            $.bootstrapGrowl("Tracking Leaver", {
+    //                ele: 'body',
+    //                type: 'success',
+    //                offset: {from: 'top', amount: 20},
+    //                align: 'right'
+    //              });
+    //              $('#DROPtable').find('td').remove();
+    //              var trHTML = response.A
+    //                  console.log(trHTML);
+    //                  $('#DROPtable').html(trHTML);
+    //                  $( ".spin-grid" ).removeClass( "fa-spin" );
+    //                  });
+    //     });
+    //
+    //
+    //
+    //     $("#DROPtable").on('click','.left',function(){
+    //          // get the current row
+    //          var currentRow=$(this).closest("tr");
+    //
+    //          var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //          console.log(id);
+    //
+    //          $.getJSON( '/dropclick', { 'data' : id, 'action': 'Left Industry' } , function( response ) {
+    //            $.bootstrapGrowl("Confirmed User Left Industry", {
+    //                ele: 'body',
+    //                type: 'success',
+    //                offset: {from: 'top', amount: 20},
+    //                align: 'right'
+    //              });
+    //              $('#DROPtable').find('td').remove();
+    //              var trHTML = response.A
+    //                  console.log(trHTML);
+    //                  $('#DROPtable').html(trHTML);
+    //                  $( ".spin-grid" ).removeClass( "fa-spin" );
+    //                  });
+    //     });
+    //
+    //     $("#DROPtable").on('click','.inactive',function(){
+    //          // get the current row
+    //          var currentRow=$(this).closest("tr");
+    //
+    //          var id=currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+    //          console.log(id);
+    //
+    //          $.getJSON( '/dropclick', { 'data' : id, 'action': 'Inactive' } , function( response ) {
+    //            $.bootstrapGrowl("Confirmed User is Inactive with No Clear Leads", {
+    //                ele: 'body',
+    //                type: 'success',
+    //                offset: {from: 'top', amount: 20},
+    //                align: 'right'
+    //              });
+    //              $('#DROPtable').find('td').remove();
+    //              var trHTML = response.A
+    //                  console.log(trHTML);
+    //                  $('#DROPtable').html(trHTML);
+    //                  $( ".spin-grid" ).removeClass( "fa-spin" );
+    //                  });
+    //     });
 
      //    $(function(){
      //      $(".dropdown-menu").on('click', 'a', function(){
@@ -235,9 +237,9 @@ $(document).ready(function(){
      //        var test = $(this).parent().siblings().find("select").val();
      //        var id = $(this).closest("tr").children().first().html();
      //        alert(test.text());
-     //        console.log(selection);
-     //        console.log(test);
-     //        console.log(id);
+     //        console.log("Button Dropdown Selection", selection);
+     //        console.log("Test Capture", test);
+     //        console.log("ID from table captured", id);
      //
      //        $.getJSON( '/dropclick', { 'data' : id, 'action': selection } , function( response ) {
      //          $.bootstrapGrowl("Confirmed User is Inactive with No Clear Leads", {
@@ -265,72 +267,70 @@ $(document).ready(function(){
      // });
      $(document).on('click', 'li', function(){
          var selection = $(this).parents('.dropdown').find('button').text($(this).text());
-         console.log(selection);
+         console.log("Button Dropdown Selection", selection);
+
          $.bootstrapGrowl(selection.text(), {
              ele: 'body',
              type: 'success',
              offset: {from: 'top', amount: 20},
              align: 'right'
            });
-           // $.bootstrapGrowl(selection, {
-           //     ele: 'body',
-           //     type: 'success',
-           //     offset: {from: 'top', amount: 20},
-           //     align: 'right'
-           //   });
+
           if (selection.text() === 'Manual Track') {
               var link=prompt("Enter LinkedIn Profile Address");
-          }else {
-              var link='';
-            }
+              if (link === null) {
+                $.bootstrapGrowl('Please Enter a Link', {
+                    ele: 'body',
+                    type: 'success',
+                    offset: {from: 'top', amount: 20},
+                    align: 'right'
+                  });
+                      return; //break out of the function early
+                }
+              }
 
          var id = $(this).closest("tr").children().first().html();
+            console.log("ID from table captured", id);
          var table = $(this).closest('table').attr('id')
-
+            console.log("Table captured", table);
 
            $.getJSON( '/confirm', { 'id' : id, 'selection': selection.text(), 'table': table, 'link': link } , function( response ) {
 
                if (table === 'LEADtable') {
                    $('#LEADtable').find('td').remove();
-                   var trHTML = response.B
-                   $('#LEADtable').html(trHTML);
+                   var lead_HTML = response.A
+                   $('#LEADtable').html(lead_HTML);
                    $( ".spin-grid" ).removeClass( "fa-spin" );
                }else if (table == 'DROPtable') {
                   $('#DROPtable').find('td').remove();
-                  var trHTML = response.A
-                  $('#DROPtable').html(trHTML);
+                  var drop_HTML = response.B
+                  $('#DROPtable').html(drop_HTML);
                   $( ".spin-grid" ).removeClass( "fa-spin" );
                 }else if (table == 'ENGAGEtable') {
                    $('#ENGAGEtable').find('td').remove();
-                   var erHTML = response.C
-                   $('#ENGAGEtable').html(erHTML);
+                   var engage_HTML = response.C
+                   $('#ENGAGEtable').html(engage_HTML);
                    $( ".spin-grid" ).removeClass( "fa-spin" );
                  }
-               // $('#DROPtable').find('td').remove();
-               // var trHTML = response.A
-               //     console.log(trHTML);
-               //     $('#DROPtable').html(trHTML);
-               //     $( ".spin-grid" ).removeClass( "fa-spin" );
-                   });
-         });
+                });
+              });
 
 
 
-    // what you want to happen when mouseover and mouseout
-    // occurs on elements that match '.dosomething'
 
-
-     // $(function(){
-     //   $(".dropdown-select").on('click', 'a', function(){
-     //     var selection = $(this).parents('.dropdown').find('button').text($(this).text());
-     //     var id = $(this).closest("tr").children().first().html();
-     //     // alert(selection.text());
-     //     alert(selection.text());
-     //   });
-     // });
 
 </script>
 <style>
+.table td.text {
+    max-width: 177px;
+}
+.table td.text span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+}
 .table {
   font-size: 10px;
   table-layout: fixed;
@@ -340,11 +340,7 @@ $(document).ready(function(){
    height: 10px;
    text-align: center
 }
-td {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+
 </style>
 
 
