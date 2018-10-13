@@ -82,6 +82,7 @@ def gen_engagement_table(elist):
                 + '<th>PROS Link</th>'
                 + '<th>Engagent Duration</th>'
                 + '<th>Link</th>'
+                + '<th>Last Touch</th>'
                 + '<th>Actions</th>'
                 + '</tr></thead><tbody>')
     table_body = ''
@@ -93,15 +94,21 @@ def gen_engagement_table(elist):
         + str(item['erole']) + '</td><td class="text"><span>'
         + str(item['efirm']) + '</span></td><td>'
         + str(item['elocation']) + '</td><td>'
-        + str(item['ePROS']) + '</td><td>'
-        + str(item['eduration']) + '</td><td><a target="_blank" href="'
-        + str(item['elink']) + ' ">LinkedIn</a></td><td>'
-        + '<div class="dropdown"><div class="btn-group">'
+        + str(item['ePROS']) + '</td><td>')
+        if item['elink'] == None:
+            table_body += str(item['eduration']) + str('</td><td>None</td><td>')
+        else:
+            table_body += str(item['eduration']) + str('</td><td><a target="_blank" href="') + str(item['elink']) + str(' ">LinkedIn</a></td><td>')
+        if item['elast'] == None:
+            table_body += str('<i class="fas fa-calendar-alt fa-2x" id="date" data-toggle="modal" data-target="#myModal"></i></td><td>')
+        else:
+            table_body += str('<i class="fas fa-calendar-check fa-2x" id="date" data-toggle="modal" data-target="#myModal"></i></td><td>')
+        table_body += str('<div class="dropdown"><div class="btn-group">'
         + '<button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
         + 'Action<span class="caret"></span></button>'
         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
-        '<li><a class="dropdown-item" href="#">Last Touch Date</a></li>'
+        + '<li><a class="dropdown-item" href="#">Last Touch Date</a></li>'
         + '<li><a class="dropdown-item" href="#">Lost Business</a></li>'
         + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
         + '<li><a class="dropdown-item" href="#">Delayed Trial</a></li>'
@@ -135,7 +142,7 @@ def engage_fill():
     ENG_list = []
     ENG_Confirm = Leaver.query.filter_by(result='Engaged', repcode=current_user.repcode).all()
     for e in ENG_Confirm:
-        ENG_dict = {'eduration': e_duration(e), 'ename': e.name, 'efirm': e.trackfirm, 'erole': e.trackrole, 'eid': e.id, 'ePROS': proslinkgen(e.prosnum), 'elocation': e.leaverlocation, 'elink': e.link}
+        ENG_dict = {'eduration': e_duration(e), 'ename': e.name, 'efirm': e.trackfirm, 'erole': e.trackrole, 'eid': e.id, 'ePROS': proslinkgen(e.prosnum), 'elocation': e.leaverlocation, 'elink': e.link, 'elast': e.elast}
         ENG_list.append(ENG_dict)
     e_table = gen_engagement_table(ENG_list)
     return e_table
@@ -151,3 +158,57 @@ def proslinkgen(num):
     snum = snum[6:]
     link = 'PROS C ' + fnum + ' ' + snum
     return link
+
+
+# def dtpckr(elist):
+#     ta_headers = str('<thead class="thead-light"><tr><th>ID</th>'
+#                 + '<th>Name</th>'
+#                 + '<th>Tracking Role</th>'
+#                 + '<th>Tracking Firm</th>'
+#                 + '<th>Location</th>'
+#                 + '<th>PROS Link</th>'
+#                 + '<th>Engagent Duration</th>'
+#                 + '<th>Link</th>'
+#                 + '<th>Last Touch</th>'
+#                 + '<th>Actions</th>'
+#                 + '</tr></thead><tbody>')
+#     table_body = ''
+#
+#     for item in elist:
+#         table_body += str('<tr><td>'
+#         + str(item['eid']) + '</td><td>'
+#         + str(item['ename']) + '</td><td>'
+#         + str(item['erole']) + '</td><td class="text"><span>'
+#         + str(item['efirm']) + '</span></td><td>'
+#         + str(item['elocation']) + '</td><td>'
+#         + str(item['ePROS']) + '</td><td>'
+#         + str(item['eduration']) + '</td><td><a target="_blank" href="'
+#         + str(item['elink']) + ' ">LinkedIn</a></td><td>')
+#         if item['elast'] == None:
+#             table_body += str('<i class="fas fa-calendar-alt fa-2x" id="date" data-toggle="modal" data-target="#myModal"></i></td><td>')
+#         else:
+#             table_body += str('<i class="fas fa-calendar-check fa-2x" id="date" data-toggle="modal" data-target="#myModal"></i></td><td>')
+#         table_body += str('<div class="dropdown"><div class="btn-group">'
+#         + '<button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+#         + 'Action<span class="caret"></span></button>'
+#         + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu">'
+#         + '<li><a class="dropdown-item" href="#">Recapture</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Last Touch Date</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Lost Business</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Left Industry</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Delayed Trial</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Manual Track</a></li>'
+#         + '<li><a class="dropdown-item" href="#">Inactive</a></li></ul></div></div></td></tr>')
+#     table_body += '</tbody>'
+#     table = ta_headers + table_body
+#     return(table)
+#
+# def testing_fill():
+#     ENG_dict = {}
+#     ENG_list = []
+#     ENG_Confirm = Leaver.query.filter_by(result='Engaged', repcode=current_user.repcode).all()
+#     for e in ENG_Confirm:
+#         ENG_dict = {'eduration': e_duration(e), 'ename': e.name, 'efirm': e.trackfirm, 'erole': e.trackrole, 'eid': e.id, 'ePROS': proslinkgen(e.prosnum), 'elocation': e.leaverlocation, 'elink': e.link, 'elast': e.elast}
+#         ENG_list.append(ENG_dict)
+#     e_table = dtpckr(ENG_list)
+#     return e_table

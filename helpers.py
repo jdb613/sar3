@@ -605,6 +605,12 @@ def day_count(t):
         days = abs((today - start).days)
     return days
 
+def e_length(t):
+    today = datetime.date.today()
+    last = t.elast.date()
+    days = abs((today - last).days)
+    return days
+
 def cscore(e):
     if e.result == 'Tracking':
         score = 1
@@ -717,4 +723,24 @@ def chart_data(type):
         # dct['data'] = dlst
         # bcd['datasets'].append(dct)
         # print('final bubble data: ', bcd)
+        return dlst
+
+    elif type == 'engage':
+        engd = Leaver.query.filter_by(result='Engaged').all()
+        print(len(engd))
+
+        dlst = []
+
+        for e in engd:
+            if e.elast == None:
+                pass
+            else:
+                d={}
+                #d['name'] = r.name
+                #d['id'] = r.id
+                d['y'] = 2
+                d['x'] = e_length(e)
+                d['r'] = role_score(e)
+                #d['r'] = e.result
+                dlst.append(d)
         return dlst

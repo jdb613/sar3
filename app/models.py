@@ -40,6 +40,7 @@ class Leaver(db.Model):
     trackend = db.Column(db.DateTime, index=True)
     outprosshell = db.Column(db.DateTime, index=True)
     estart = db.Column(db.DateTime, index=True)
+    elast = db.Column(db.DateTime, index=True)
     eend = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
@@ -81,10 +82,10 @@ class LJFT(db.Model):
         return '<LJFT {}>'.format(self.name)
 
 
-
 @login.user_loader
 def load_user(id):
     return Srep.query.get(int(id))
+
 # flask db init
 # flask db migrate -m "db setup"
 # flask db upgrade

@@ -19,6 +19,7 @@ $(document).ready(function(){
   var newchart1=null;
   var newchart2=null;
   var newchart3=null;
+  var newchart4=null;
 
 
     $.getJSON( '/chartgenerator', function( response ) {
@@ -142,6 +143,87 @@ $(document).ready(function(){
 
             }
           });
+          var data4 = response.D;
+          console.log(data4);
+          Chart.defaults.global.defaultFontColor = 'rgb(0,0,255)'
+            var bubbleBackgroundColor = function() {
+                      return 'rgb(0,128,0)'
+            };
+            var bubbleBorderColor = function() {
+                      return 'rgb(0,0,255)'
+            };
+
+            var bubbleChartData = {
+              // Documentation says the tick values tick.min & tick.max must be in the Labels array. So thats what I have below
+              yLabels:  ['Engaged'],
+              datasets: [{
+                label: "Leaver",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: bubbleBackgroundColor(),
+                borderColor: bubbleBorderColor(),
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(153, 102, 155, 0.2)",
+                pointHoverBorderColor: "rgba(153, 102, 155, 1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                // how would the data change ...how can the numbers for y be replaced with strings
+
+                // data: jitter(data3)
+                data: data4
+              }]
+            };
+
+
+            var ctx = document.getElementById('echart');
+            var bubble = new Chart(ctx, {
+              type: 'bubble',
+              data: bubbleChartData,
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text:'Engagement Report'
+                },
+                  scales: {
+                    yAxes: [{
+                      display: true,
+                      ticks: {
+                        beginAtZero:true,
+                        stepSize : 1,
+                        // min: 0,
+                        max: 5,
+                        padding: 80,
+                        callback:function(value) {
+                          var x = ["", "Engaged", ""];
+                          return x[value | 0];
+                          }
+                      }
+                        // will this create y-axis with days of week?
+                        // type: 'category',
+                        // position: 'left',
+                        // ticks: {
+                        //   min: "Test",
+                        //   max: "Engaged"
+                        // }
+                    }],
+                    xAxes: [{
+                      ticks: {
+                      padding: 80
+                  }
+                    }]
+                  }
+
+              }
+            });
     });
 
     // function drawdough() {
@@ -276,6 +358,9 @@ $(document).ready(function(){
                 </div>
                 <div class="card-body" id="schartdiv">
                     <canvas id="schart" width="800" height="400"></canvas>
+                </div>
+                <div class="card-body" id="schartdiv">
+                    <canvas id="echart" width="800" height="400"></canvas>
                 </div>
             </div>
         </div>

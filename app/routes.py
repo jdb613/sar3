@@ -221,111 +221,6 @@ def sorter():
 
         return json.dumps(parentdict)
 
-#changes leaver status to Tracking on 'follow' button click (on table)
-# @app.route('/leadclick', methods=['GET', 'POST'])
-# @login_required
-# def leadclick():
-#     ident = request.args.get( 'data', '', type = int )
-#     hit = Suspect.query.filter_by(id=ident).first()
-#     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
-#     lhit.leaverrole = hit.srole
-#     lhit.leaverfirm = hit.sfirm
-#     lhit.link = hit.slink
-#     lhit.leaverlocation = hit.slocation
-#     lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     lhit.result = 'Lead'
-#     lhit.inprosshell = 'No'
-#     hit.result = 'Selected'
-#     hit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     #.isoformat()
-#     db.session.commit()
-#
-#     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
-#     leaver_dict = fillselect(leavers)
-#     return json.dumps(leaver_dict)
-
-# @app.route('/trackclick', methods=['GET', 'POST'])
-# @login_required
-# def trackclick():
-#     ident = request.args.get( 'data', '', type = int )
-#     print('confirming ident capture: ', ident)
-#     hit = Suspect.query.filter_by(id=ident).first()
-#     print('confirming suspect ident match: ', hit.name)
-#     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
-#     print('confirming leaver suspect match: ', lhit.name)
-#     lhit.leaverrole = hit.srole
-#     lhit.leaverfirm = hit.sfirm
-#     lhit.link = hit.slink
-#     lhit.leaverlocation = hit.slocation
-#     lhit.result = 'Tracking'
-#     lhit.trackstart = datetime.datetime.now(datetime.timezone.utc)
-#     hit.result = 'Selected'
-#     hit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     db.session.commit()
-#
-#     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
-#     leaver_dict = fillselect(leavers)
-#
-#     return json.dumps(leaver_dict)
-# #changes leaver status to placed and reloads dropdown
-# @app.route('/placeclick', methods=['GET', 'POST'])
-# @login_required
-# def placeclick():
-#     ident = request.args.get( 'data', '', type = int )
-#     hit = Suspect.query.filter_by(id=ident).first()
-#     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
-#     lhit.leaverrole = hit.srole
-#     lhit.leaverfirm = hit.sfirm
-#     lhit.link = hit.slink
-#     lhit.leaverlocation = hit.slocation
-#     lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     lhit.result = 'Recapture'
-#     db.session.commit()
-#
-#     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
-#     leaver_dict = fillselect(leavers)
-#     return json.dumps(leaver_dict)
-#
-# @app.route('/repclick', methods=['GET', 'POST'])
-# @login_required
-# def repclick():
-#     ident = request.args.get( 'data', '', type = int )
-#     hit = Suspect.query.filter_by(id=ident).first()
-#     lhit = Leaver.query.filter_by(id=hit.leaverid).first()
-#     lhit.leaverrole = hit.srole
-#     lhit.leaverfirm = hit.sfirm
-#     lhit.link = hit.slink
-#     lhit.leaverlocation = hit.slocation
-#     lhit.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     lhit.result = 'Left Industry'
-#     db.session.commit()
-#
-#     leavers = Leaver.query.filter_by(repcode=current_user.repcode, result='Lost', inprosshell='Yes').all()
-#     leaver_dict = fillselect(leavers)
-#     return json.dumps(leaver_dict)
-# #deletes suspect from possible matches for a given leaver
-# @app.route('/removeclick', methods=['GET', 'POST'])
-# @login_required
-# def removeclick():
-#     ident = request.args.get( 'data', '', type = int )
-#     suspect = Suspect.query.filter_by(id=ident).first()
-#     suspect.result = 'Removed'
-#     suspect.datetimeresult = datetime.datetime.now(datetime.timezone.utc)
-#     db.session.commit()
-#
-#     lid = suspect.leaverid
-#     suspect_dict = []
-#     suspects = Suspect.query.filter_by(leaverid=lid, result=None).all()
-#
-#     print('checking suspects: removeclick...')
-#     for s in suspects:
-#         print('name: ', s.name)
-#         print('result: ', s.result)
-#     for s in suspects:
-#         s_dict = {'ident': s.id, 'name': s.name, 'link': s.slink, 'role': s.srole, 'firm':s.sfirm, 'location': s.slocation}
-#         suspect_dict.append(s_dict)
-#     return json.dumps(suspect_dict)
-
 
 @app.route('/charts')
 @login_required
@@ -344,9 +239,11 @@ def chartgenerator():
     chartdata1 = chart_data('doughnut')
     chartdata2 = chart_data('stackedbar')
     chartdata3 = chart_data('scatter')
+    chartdata4 = chart_data('engage')
     chartdata['A']= chartdata1
     chartdata['B']= chartdata2
     chartdata['C'] = chartdata3
+    chartdata['D'] = chartdata4
 
 
     return json.dumps(chartdata)
@@ -397,3 +294,29 @@ def register():
 def testing():
 
     return render_template('bokehtesting.html', title='Testing')
+
+@app.route('/datepicker', methods=['GET', 'POST'])
+def datepicker():
+    parentdict = {}
+    parentdict['C'] = testing_fill()
+
+    return json.dumps(parentdict)
+
+@app.route('/edates', methods=['GET', 'POST'])
+@login_required
+def edates():
+    picker_date = request.args.get('date', '')
+    picker_id  = request.args.get('eid', '', type = int)
+    print('Picker ID: ', picker_id)
+
+    format_str = '%m-%d-%Y' # The format
+    datetime_obj = datetime.datetime.strptime(picker_date, format_str)
+    print(datetime_obj.date())
+    leaver = Leaver.query.filter_by(id=picker_id).first()
+    leaver.elast = datetime_obj
+    db.session.commit()
+
+    parentdict = {}
+    parentdict['C'] = engage_fill()
+
+    return json.dumps(parentdict)

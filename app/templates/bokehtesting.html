@@ -1,78 +1,194 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Complete Example</title>
-<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.css" type="text/css" />
-<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
-<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-api-0.12.5.min.js"></script>
-<!-- The order of CSS and JS imports above is important. -->
-</head>
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content %}
 
-<body>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 
-<button onclick="addPoint()">Add some data!</button><br/>
 
-<div>
+
 <script type="text/javascript">
 
-// arrays to hold data
-var source = new Bokeh.ColumnDataSource({
-    data: { x: [], y: [] }
-});
-
-// make the plot and add some tools
-var tools = "pan,crosshair,wheel_zoom,box_zoom,reset,save";
-
-var plot = Bokeh.Plotting.figure({title:'Example of Random data', tools: tools, height: 300, width: 300});
-
-var scatterData = plot.line({ field: "x" }, { field: "y" }, {
-    source: source,
-    line_width: 2
-});
-
-// Show the plot, appending it to the end of the current
-// section of the document we are in.
-Bokeh.Plotting.show(plot,document.currentScript.parentElement);
-
-function addPoint() {
-    // The data can be added, but generally all fields must be the
-    // same length.
-    source.data.x.push(Math.random());
-    source.data.y.push(Math.random());
-    // Also, the DataSource object must be notified when it has changed.
-    source.change.emit();
-}
-var bubbleChartData = {
-    animation: {
-      duration: 10000
-    },
-    // Documentation says the tick values tick.min & tick.max must be in the Labels array. So thats what I have below
-    yLabels: ["Mon", "Tue", "wed", "Thu"],
-    datasets: [{
-      label: "Requests and bookings",
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: bubbleBackgroundColor(),
-      borderColor: bubbleBorderColor(),
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: "rgba(75,192,192,1)",
-      pointBackgroundColor: "#fff",
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: "rgba(153, 102, 155, 0.2)",
-      pointHoverBorderColor: "rgba(153, 102, 155, 1)",
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      // how would the data change ...how can the numbers for y be replaced with strings
-      data:[{x: 2,y: 0,r: 15},{x: 3,y: 1,r: 19}, {x: 5,y: 2,r: 15}, {x: 4, y: 3,r: 18}]
-    }]
+$(document).ready(function(){
+  var datePickerOptions = {
+      dateFormat: 'yy/m/d',
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      // ...
   };
+    $.getJSON( '/datepicker', function( response ) {
+      console.log("Response from /datepicker", response);
+
+      var engage_HTML = response.C;
+
+          console.log("Engaged Table HTML", engage_HTML);
+          $('#ENGAGEtable').html(engage_HTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
+
+        });
+
+      });
+      $('body').on('click', '#date', function() {
+        var tdid = $(this).parents("tr").children("td:first").text();
+        $(".fid").val(tdid);
+        var tdname = $(this).parents("tr").children("td:nth-child(2)").text();
+      $(".pname").val(tdname);
+          var tdplink = $(this).parents("tr").children("td:nth-child(6)").text();
+        $(".plink").val(tdplink);
+        $('#edate').datepicker({
+          format: 'dd-mm-yy'
+        }).on('hide', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      });
+      $('body').on('click', '#done', function() {
+        var id = $('input[name="eid"]').val();
+        var eDate = $( "#edate" ).datepicker( "getDate" );
+        var format_date = $.datepicker.formatDate("dd-mm-yy", eDate);
+        var eName = $('input[name="eng_name"]').val();
+        var growl = 'ID number: ' + id;
+        console.log(eName);
+        console.log(format_date);
+        console.log(id);
+          $.bootstrapGrowl( growl , {
+              ele: 'body',
+              type: 'success',
+              offset: {from: 'top', amount: 20},
+              align: 'right'
+            });
+      $.getJSON( '/edates', { 'eid' : id, 'date': format_date } , function( response ) {
+        console.log(response['C'])
+        $('#ENGAGEtable').find('td').remove();
+        var engage_HTML = response.C;
+        $('#ENGAGEtable').html(engage_HTML);
+        $( ".spin-grid" ).removeClass( "fa-spin" );
+      });
+
+        });
+        $('body').on('click', '#copy-btn', function() {
+          $(this).find('input').focus();
+          $(this).find('input').select();
+          document.execCommand('copy');
+          // textArea.value = copyText.textContent;
+          // console.log(textArea.value);
+          // document.body.appendChild(textArea);
+          // textArea.select();
+          // document.execCommand("Copy");
+          // textArea.remove();
+          $.bootstrapGrowl( 'Copied!' , {
+              ele: 'body',
+              type: 'success',
+              offset: {from: 'top', amount: 20},
+              align: 'right'
+            });
+        });
+
 </script>
+<style>
+.table td.text {
+    max-width: 177px;
+}
+.table td.text span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+}
+.table {
+  font-size: 10px;
+  table-layout: fixed;
+}
+
+.table tr,.table td {
+   height: 10px;
+   text-align: center
+}
+
+</style>
+
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+<h3 class="text-center">Engagements</h3>
+<p class="text-center">Actively Selling to These Users</p>
 </div>
-</body>
-</html>
+<div class="col-sm-3">
+</div>
+</div>
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-10">
+  <table id="ENGAGEtable" class="table table-hover table-sm">
+
+
+        </table>
+      </div>
+      <div class="col-sm-1">
+      </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Date of Last Contact</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-9">
+                      <div class="form-horizontal dateform">
+                        <div class="form-group">
+                            <!-- add "has-error" for validation-->
+                            <label class="control-label col-xs-6 col-md-4">ID</label>
+                            <div class="col-xs-12 col-sm-6 col-md-8">
+                                <input type="text" name="eid" class="form-control fid" placeholder="123">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- add "has-error" for validation-->
+                                <label class="control-label col-xs-6 col-md-4">Name</label>
+                                <div class="col-xs-12 col-sm-6 col-md-8">
+                                    <input type="text" name="eng_name" class="form-control pname" placeholder="Name">
+                                  </div>
+                                </div>
+                          <div class="form-group">
+                              <!-- add has-error for validation-->
+                              <label class="control-label col-xs-6 col-md-4">PROS Link</label>
+                              <div class="col-xs-12 col-sm-6 col-md-8">
+                                <div class="input-group addon">
+                                  <input type="text" id="PROS" class="form-control plink" placeholder="PROSC">
+                                  <span class="input-group-addon" id="copy-btn"><i class="fas fa-copy"></i></span>
+                                </div>
+                              </div>
+                                </div>
+                          <div class="form-group">
+                            <label class="control-label col-xs-6 col-md-4">Date</label>
+                            <input type="text" id="edate" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-9">
+                          </div>
+                          <div class="col-md-3">
+                            <div class="modal-footer">
+                              <button type="button" id="done" class="btn btn-secondary" data-dismiss="modal">Done</button>
+                            </div>
+                          </div>
+                        </div>
+
+        </div>
+      </div>
+    </div>
+{% endblock %}
