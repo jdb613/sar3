@@ -633,6 +633,64 @@ def chart_data(type):
         data['labels'] = result_list
         data['datasets'] = count_list
         return data
+
+    elif type == 'rezbar':
+        print('getting data for result chart')
+        data = {}
+        df = pd.read_sql(db.session.query(Buckets).statement,db.session.bind)
+        df.date = df.date.apply(lambda x: str(x).split(' ')[0])
+        accountedfor = df.loc[df['status'].isin(['Tracking','Engaged'])]
+        unaccountedfor = df.loc[df['status'].isin(['Lost','Inactive'])]
+        act4 = accountedfor.groupby('date', as_index=False)['count'].sum()
+        unact4 = unaccountedfor.groupby('date', as_index=False)['count'].sum()
+        final = pd.merge(act4, unact4, on='date')
+        final = final.rename(index=str, columns={"count_x": "Accounted", "count_y": "Unaccounted"})
+        final['%Accounted'] = round((final['Accounted'] / (final['Accounted'] + final['Unaccounted'])) * 100)
+        print('dataframe: ', final)
+
+        datasets = []
+        actlist = []
+        uactlist = []
+        dt_list = []
+        pct_list = []
+        for index, row in final.iterrows():
+            actlist.append(row['Accounted'])
+            uactlist.append(row['Unaccounted'])
+            dt_list.append(row['date'])
+            pct_list.append(row['%Accounted'])
+        dct_a = {}
+        dct_b = {}
+        dct_c = {}
+
+        dct_c['type'] = 'line'
+        dct_c['data'] = pct_list
+        dct_c['label'] = '% Accounted For'
+        dct_c['borderColor'] = "#FFFF00"
+        dct_c['yAxisID'] = "y-axis-2"
+        dct_c['fill'] = False
+
+        dct_a['label'] = 'Accounted For'
+        dct_a['data'] = actlist
+        dct_a['backgroundColor'] = "#3e95cd"
+        dct_a['yAxisID'] = "y-axis-1"
+
+        dct_b['label'] = 'Unaccounted For'
+        dct_b['data'] = uactlist
+        dct_b['backgroundColor'] = "#085b83"
+        dct_b['yAxisID'] = "y-axis-1"
+
+
+        datasets.append(dct_c)
+        datasets.append(dct_a)
+        datasets.append(dct_b)
+
+
+
+        data['datasets'] = datasets
+        data['labels'] = dt_list
+        print('result chart data: ', data)
+        return data
+
     elif type == 'stackedbar':
         print('getting data for bar chart')
         data = {}

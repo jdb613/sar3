@@ -240,10 +240,12 @@ def chartgenerator():
     chartdata2 = chart_data('stackedbar')
     chartdata3 = chart_data('scatter')
     chartdata4 = chart_data('engage')
+    chartdata5 = chart_data('rezbar')
     chartdata['A']= chartdata1
     chartdata['B']= chartdata2
     chartdata['C'] = chartdata3
     chartdata['D'] = chartdata4
+    chartdata['E'] = chartdata5
 
 
     return json.dumps(chartdata)

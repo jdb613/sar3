@@ -20,10 +20,46 @@ $(document).ready(function(){
   var newchart2=null;
   var newchart3=null;
   var newchart4=null;
+  var newchart5=null;
 
 
     $.getJSON( '/chartgenerator', function( response ) {
       console.log(response);
+      var data5 = response.E;
+      var ctx = document.getElementById("rchart").getContext("2d");
+      console.log(ctx);
+      console.log(data5);
+      var newchart5 = new Chart(ctx, {
+          type: 'bar',
+          data: data5,
+          options: {
+            scales: {
+              xAxes: [{stacked: true}],
+              yAxes: [{
+                type: 'linear',
+                stacked: true,
+                display: true,
+                position: "left",
+                id: "y-axis-1",
+                ticks: {
+                  beginAtZero: true
+                        }
+                      },
+      {
+        type: 'linear',
+        stacked: true,
+        display: true,
+        position: "right",
+        id: "y-axis-2",
+        ticks: {
+          beginAtZero: true,
+          suggestedMin: 0,
+          suggestedMax: 100
+                }
+              }]
+            }
+          }
+      });
       var data1 = response.A;
 
       console.log(data1);
@@ -350,6 +386,9 @@ $(document).ready(function(){
     <div class="row">
         <div class="col-md-9">
             <div class="card">
+              <div class="card-body" id="rchartdiv">
+                  <canvas id="rchart" width="800" height="400"></canvas>
+              </div>
                 <div class="card-body" id="dchartdiv">
                     <canvas id="dchart" width="600" height="400"></canvas>
                 </div>
