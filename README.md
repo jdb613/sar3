@@ -8,18 +8,18 @@ Recapture your B2B Subscribers in Transition with Tracking Updates from SAR. Upl
 ## Application Walkthrough
 
 ### Upload Lost Customer List from Excel
-<img src="app/static/READMEimg/Upload.png" width="300" height="150" />
+<img src="app/static/READMEimg/Upload.png" width="600" height="300" />
 
 ### ID Your Customer from Potential Matches
-<img src="app/static/READMEimg/Match.png" width="300" height="150" />
+<img src="app/static/READMEimg/Match.png" width="600" height="300" />
 
 ### Track Alerts and Manage Engagements using the Dashboard
-<img src="app/static/READMEimg/Dashboard.png" width="300" height="150" />
+<img src="app/static/READMEimg/Dashboard.png" width="600" height="300" />
 
 ### Track Group Performance
-<img src="app/static/READMEimg/Progress1.png" width="200" height="200" />
-<img src="app/static/READMEimg/Progress2.png" width="200" height="200" />
-<img src="app/static/READMEimg/Progress3.png" width="150" height="100" />
+<img src="app/static/READMEimg/Progress1.png" width="600" height="600" />
+<img src="app/static/READMEimg/Progress2.png" width="600" height="600" />
+<img src="app/static/READMEimg/Progress3.png" width="300" height="200" />
 
 ### Prerequisites
 
