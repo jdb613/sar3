@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content %}
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(document).ready(function(){
+  var datePickerOptions = {
+      dateFormat: 'mm/dd/yy',
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      // ...
+  };
+    $.getJSON( '/indexitems', function( response ) {
+      console.log("Response from /indexitems", response);
+
+      var track_HTML = response.A;
+      var drop_HTML = response.B;
+      var engage_HTML = response.C;
+
+          console.log("TrackAlert Table HTML", track_HTML);
+          $('#LEADtable').html(track_HTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
+          console.log("Dropped Table HTML", drop_HTML);
+          $('#DROPtable').html(drop_HTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
+          console.log("Engaged Table HTML", engage_HTML);
+          $('#ENGAGEtable').html(engage_HTML);
+          $( ".spin-grid" ).removeClass( "fa-spin" );
+        });
+      });
+
+
+
+     $(document).on('click', 'li', function(){
+         var selection = $(this).parents('.dropdown').find('button').text($(this).text());
+         console.log("Button Dropdown Selection", selection);
+
+         $.bootstrapGrowl(selection.text(), {
+             ele: 'body',
+             type: 'success',
+             offset: {from: 'top', amount: 20},
+             align: 'right'
+           });
+
+          if (selection.text() === 'Manual Track') {
+              var link=prompt("Enter LinkedIn Profile Address");
+              if (link === null) {
+                $.bootstrapGrowl('Please Enter a Link', {
+                    ele: 'body',
+                    type: 'success',
+                    offset: {from: 'top', amount: 20},
+                    align: 'right'
+                  });
+                      return; //break out of the function early
+                }
+              }
+
+         var id = $(this).closest("tr").children().first().html();
+            console.log("ID from table captured", id);
+         var table = $(this).closest('table').attr('id')
+            console.log("Table captured", table);
+
+           $.getJSON( '/confirm', { 'id' : id, 'selection': selection.text(), 'table': table, 'link': link } , function( response ) {
+
+               if (table === 'LEADtable') {
+                   $('#LEADtable').find('td').remove();
+                   var lead_HTML = response.A
+                   $('#LEADtable').html(lead_HTML);
+                   $( ".spin-grid" ).removeClass( "fa-spin" );
+               }else if (table == 'DROPtable') {
+                  $('#DROPtable').find('td').remove();
+                  var drop_HTML = response.B
+                  $('#DROPtable').html(drop_HTML);
+                  $( ".spin-grid" ).removeClass( "fa-spin" );
+                }else if (table == 'ENGAGEtable') {
+                   $('#ENGAGEtable').find('td').remove();
+                   var engage_HTML = response.C
+                   $('#ENGAGEtable').html(engage_HTML);
+                   $( ".spin-grid" ).removeClass( "fa-spin" );
+                 }
+                });
+              });
+
+      $('body').on('click', '#date', function() {
+        var tdid = $(this).parents("tr").children("td:first").text();
+        $(".fid").val(tdid);
+        var tdname = $(this).parents("tr").children("td:nth-child(2)").text();
+      $(".pname").val(tdname);
+          var tdplink = $(this).parents("tr").children("td:nth-child(6)").text();
+        $(".plink").val(tdplink);
+        $('#edate').datepicker({
+          format: 'dd-mm-yy'
+        }).on('hide', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      });
+
+      $('body').on('click', '#done', function() {
+        var id = $('input[name="eid"]').val();
+        var eDate = $( "#edate" ).datepicker( "getDate" );
+        var format_date = $.datepicker.formatDate("mm-dd-yy", eDate);
+        var eName = $('input[name="eng_name"]').val();
+        var growl = 'ID number: ' + id;
+        console.log(eName);
+        console.log(format_date);
+        console.log(id);
+          $.bootstrapGrowl( growl , {
+              ele: 'body',
+              type: 'success',
+              offset: {from: 'top', amount: 20},
+              align: 'right'
+            });
+      $.getJSON( '/edates', { 'eid' : id, 'date': format_date } , function( response ) {
+        console.log(response['C'])
+        $('#ENGAGEtable').find('td').remove();
+        var engage_HTML = response.C;
+        $('#ENGAGEtable').html(engage_HTML);
+        $( ".spin-grid" ).removeClass( "fa-spin" );
+      });
+
+        });
+
+        $('body').on('click', '#copy-btn', function() {
+          $(this).find('input').focus();
+          $(this).find('input').select();
+          document.execCommand('copy');
+          // textArea.value = copyText.textContent;
+          // console.log(textArea.value);
+          // document.body.appendChild(textArea);
+          // textArea.select();
+          // document.execCommand("Copy");
+          // textArea.remove();
+          $.bootstrapGrowl( 'Copied!' , {
+              ele: 'body',
+              type: 'success',
+              offset: {from: 'top', amount: 20},
+              align: 'right'
+            });
+        });
+
+
+
+
+
+</script>
+<style>
+.table td.text {
+    max-width: 177px;
+}
+.table td.text span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+}
+.table {
+  font-size: 10px;
+  table-layout: fixed;
+}
+
+.table tr,.table td {
+   height: 10px;
+   text-align: center
+}
+
+</style>
+
+
+<p align="right">Logged In: {{ current_user.name }}</p>
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+    <p class="text-center"><b>leaverslead</b> TAG If Lead Entered</p>
+<h3 class="text-center">TrackAlerts</h3>
+<p class="text-center">LinkedIn Profile Changes Detected</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
+
+<div>
+<h3></h3>
+<p></p>
+
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-10">
+  <table id="LEADtable" class="table table-hover table-sm table-hover-cursor">
+
+
+        </table>
+      </div>
+      <div class="col-sm-1">
+      </div>
+      </div>
+<br>
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+<h3 class="text-center">Dropped from LJFT Bucket</h3>
+<p class="text-center">The Users Below are NO LONGER in the LJFT Shell.</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
+    <div class="row">
+      <div class="col-sm-1">
+      </div>
+      <div class="col-sm-10">
+
+    <table id="DROPtable" class="table table-hover table-sm">
+
+          </table>
+          </div>
+          <div class="col-sm-1">
+          </div>
+    </div>
+<br>
+<div class="row">
+  <div class="col-sm-3">
+  </div>
+  <div class="col-sm-6">
+<h3 class="text-center">Engagements</h3>
+<p class="text-center">Actively Selling to These Users</p>
+</div>
+<div class="col-sm-3">
+</div>
+</div>
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-10">
+  <table id="ENGAGEtable" class="table table-hover table-sm">
+
+
+        </table>
+      </div>
+      <div class="col-sm-1">
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Date of Last Contact</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-9">
+                      <div class="form-horizontal dateform">
+                        <div class="form-group">
+                            <!-- add "has-error" for validation-->
+                            <label class="control-label col-xs-6 col-md-4">ID</label>
+                            <div class="col-xs-12 col-sm-6 col-md-8">
+                                <input type="text" name="eid" class="form-control fid" placeholder="123">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- add "has-error" for validation-->
+                                <label class="control-label col-xs-6 col-md-4">Name</label>
+                                <div class="col-xs-12 col-sm-6 col-md-8">
+                                    <input type="text" name="eng_name" class="form-control pname" placeholder="Name">
+                                  </div>
+                                </div>
+                          <div class="form-group">
+                              <!-- add has-error for validation-->
+                              <label class="control-label col-xs-6 col-md-4">PROS Link</label>
+                              <div class="col-xs-12 col-sm-6 col-md-8">
+                                <div class="input-group addon">
+                                  <input type="text" id="PROS" class="form-control plink" placeholder="PROSC">
+                                  <span class="input-group-addon" id="copy-btn"><i class="fas fa-copy"></i></span>
+                                </div>
+                              </div>
+                                </div>
+                          <div class="form-group">
+                            <label class="control-label col-xs-6 col-md-4">Date</label>
+                            <input type="text" id="edate" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-9">
+                          </div>
+                          <div class="col-md-3">
+                            <div class="modal-footer">
+                              <button type="button" id="done" class="btn btn-secondary" data-dismiss="modal">Done</button>
+                            </div>
+                          </div>
+                        </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content %}
+<script>
+    var jitter = function(data) {
+    return data.map(function(e) {
+      // var xJitter = Math.random() * (-1 - 1) + 1;
+      // var yJitter = Math.random() * (-1 - 1) + 1;
+      var xJitter = Math.random() * (-.5 - .5) + 1;
+      var yJitter = Math.random() * (-.5 - .5) + 1;
+      return {
+        x: e.x + xJitter,
+        y: e.y + yJitter,
+        z: e.z,
+      }
+    });
+    };
+$(document).ready(function(){
+  var newchart1=null;
+  var newchart2=null;
+  var newchart3=null;
+  var newchart4=null;
+  var newchart5=null;
+
+
+    $.getJSON( '/chartgenerator', function( response ) {
+      console.log(response);
+      var data5 = response.E;
+      var ctx = document.getElementById("rchart").getContext("2d");
+      console.log(ctx);
+      console.log(data5);
+      var newchart5 = new Chart(ctx, {
+          type: 'bar',
+          data: data5,
+          options: {
+            scales: {
+              xAxes: [{stacked: true}],
+              yAxes: [{
+                type: 'linear',
+                stacked: true,
+                display: true,
+                position: "left",
+                id: "y-axis-1",
+                ticks: {
+                  beginAtZero: true
+                        }
+                      },
+      {
+        type: 'linear',
+        stacked: true,
+        display: true,
+        position: "right",
+        id: "y-axis-2",
+        ticks: {
+          beginAtZero: true,
+          suggestedMin: 0,
+          suggestedMax: 100
+                }
+              }]
+            }
+          }
+      });
+      var data1 = response.A;
+
+      console.log(data1);
+
+          $(function() {
+        //...
+
+        var ctx = document.getElementById("dchart").getContext("2d");
+        var newchart1 = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data1['labels'],
+                datasets: [{
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#FFFF00"],
+                    data: data1['datasets']
+                }]
+            },
+            options: {}
+        });
+        var data2 = response.B;
+        var ctx = document.getElementById("bchart").getContext("2d");
+        console.log(ctx);
+        console.log(data2);
+        var newchart2 = new Chart(ctx, {
+            type: 'bar',
+            data: data2,
+            options: {
+              scales: {
+                xAxes: [{stacked: true}],
+                yAxes: [{
+                  stacked: true,
+        	        ticks: {
+          	beginAtZero: true
+           }
+        }]
+        }
+            }
+        });
+        var data3 = response.C;
+        console.log(data3);
+        Chart.defaults.global.defaultFontColor = 'rgb(0,0,255)'
+          var bubbleBackgroundColor = function() {
+                    return 'rgb(0,128,0)'
+          };
+          var bubbleBorderColor = function() {
+                    return 'rgb(0,0,255)'
+          };
+
+          var bubbleChartData = {
+            // Documentation says the tick values tick.min & tick.max must be in the Labels array. So thats what I have below
+            yLabels:  ['Test', 'Tracking', 'Recapture', 'Engaged'],
+            datasets: [{
+              label: "Leaver",
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: bubbleBackgroundColor(),
+              borderColor: bubbleBorderColor(),
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(153, 102, 155, 0.2)",
+              pointHoverBorderColor: "rgba(153, 102, 155, 1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              // how would the data change ...how can the numbers for y be replaced with strings
+
+              // data: jitter(data3)
+              data: data3
+            }]
+          };
+
+
+          var ctx = document.getElementById('schart');
+          var bubble = new Chart(ctx, {
+            type: 'bubble',
+            data: bubbleChartData,
+            options: {
+              responsive: true,
+              title: {
+                display: true,
+                text:'Aging Report'
+              },
+                scales: {
+                  yAxes: [{
+                    display: true,
+                    ticks: {
+                      beginAtZero:true,
+                      stepSize : 1,
+                      // min: 0,
+                      max: 5,
+                      padding: 80,
+                      callback:function(value) {
+                        var x = ["", "Tracking", "Recapture", "Engaged", ""];
+                        return x[value | 0];
+                        }
+                    }
+                      // will this create y-axis with days of week?
+                      // type: 'category',
+                      // position: 'left',
+                      // ticks: {
+                      //   min: "Test",
+                      //   max: "Engaged"
+                      // }
+                  }],
+                  xAxes: [{
+                    ticks: {
+                    padding: 80
+                }
+                  }]
+                }
+
+            }
+          });
+          var data4 = response.D;
+          console.log(data4);
+          Chart.defaults.global.defaultFontColor = 'rgb(0,0,255)'
+            var bubbleBackgroundColor = function() {
+                      return 'rgb(0,128,0)'
+            };
+            var bubbleBorderColor = function() {
+                      return 'rgb(0,0,255)'
+            };
+
+            var bubbleChartData = {
+              // Documentation says the tick values tick.min & tick.max must be in the Labels array. So thats what I have below
+              yLabels:  ['Engaged'],
+              datasets: [{
+                label: "Leaver",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: bubbleBackgroundColor(),
+                borderColor: bubbleBorderColor(),
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(153, 102, 155, 0.2)",
+                pointHoverBorderColor: "rgba(153, 102, 155, 1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                // how would the data change ...how can the numbers for y be replaced with strings
+
+                // data: jitter(data3)
+                data: data4
+              }]
+            };
+
+
+            var ctx = document.getElementById('echart');
+            var bubble = new Chart(ctx, {
+              type: 'bubble',
+              data: bubbleChartData,
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text:'Engagement Report'
+                },
+                  scales: {
+                    yAxes: [{
+                      display: true,
+                      ticks: {
+                        beginAtZero:true,
+                        stepSize : 1,
+                        // min: 0,
+                        max: 5,
+                        padding: 80,
+                        callback:function(value) {
+                          var x = ["", "Engaged", ""];
+                          return x[value | 0];
+                          }
+                      }
+                        // will this create y-axis with days of week?
+                        // type: 'category',
+                        // position: 'left',
+                        // ticks: {
+                        //   min: "Test",
+                        //   max: "Engaged"
+                        // }
+                    }],
+                    xAxes: [{
+                      ticks: {
+                      padding: 80
+                  }
+                    }]
+                  }
+
+              }
+            });
+    });
+
+    // function drawdough() {
+    //
+    //     var ctx = document.getElementById("mychart").getContext("2d");
+    //
+    //     console.log(ctx);
+    //     var newchart = new Chart(ctx, {
+    //         type: 'doughnut',
+    //         data: {
+    //             labels: data['labels'],
+    //             datasets: [{
+    //                 backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#FFFF00"],
+    //                 data: data['datasets']
+    //             }]
+    //         },
+    //         options: {}
+    //     });
+    // }
+//     $(function() {
+//   //...
+//
+//   // drawbar(data);
+//
+// });
+    // function drawbar() {
+    //     var ctx = document.getElementById("mychart").getContext("2d");
+    //     console.log(ctx);
+    //     console.log(data);
+    //     var newchart = new Chart(ctx, {
+    //         type: 'bar',
+    //         data: data,
+    //         options: {
+    //           scales: {
+    //             xAxes: [{stacked: true}],
+    //             yAxes: [{
+    //               stacked: true,
+    //     	        ticks: {
+    //       	beginAtZero: true
+    //        }
+    //     }]
+    //     }
+    //         }
+    //     });
+    // }
+  });
+  $("#chartselect").on('change', function() {
+
+    var selection = $('#chartselect').val();
+    if (selection === 'doughnut') {
+      if(newchart1!=null){
+        newchart1.destroy();
+        $("canvas#dchart").remove();
+        $("div.dchartdiv").append('<canvas id="dchart" width="600" height="400"></canvas>');
+    }
+      console.log(selection);
+      $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
+        console.log(response);
+        var data1 = response;
+        var ctx = document.getElementById("dchart").getContext("2d");
+
+        console.log(ctx);
+        var newchart1 = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data1['labels'],
+                datasets: [{
+                    backgroundColor: ["#c45850", "#e8c3b9", "#3cba9f", "#8e5ea2", "#3e95cd", "#FFFF00"],
+                    data: data1['datasets']
+                }]
+            },
+            options: {}
+        });
+
+      });
+    }else if(selection === 'stackedbar') {
+      if(newchart2!=null){
+        newchart2.destroy();
+        $("canvas#bchart").remove();
+        $("div.bchartdiv").append('<canvas id="bchart" width="600" height="400"></canvas>');
+    }
+      console.log(selection);
+      var selection = $('#chartselect').val();
+      $.getJSON( '/chartgenerator', { 'data' : selection } , function( response ) {
+        console.log(response);
+        var data2 = response;
+        var ctx = document.getElementById("bchart").getContext("2d");
+        console.log(ctx);
+        console.log(data2);
+        var newchart2 = new Chart(ctx, {
+            type: 'bar',
+            data: data2,
+            options: {
+              scales: {
+                xAxes: [{stacked: true}],
+                yAxes: [{
+                  stacked: true,
+        	        ticks: {
+          	beginAtZero: true
+           }
+        }]
+        }
+            }
+        });
+
+      });
+    }else{
+
+    }
+
+  });
+});
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <select name="chartselect" id="chartselect">
+        <option value="doughnut">Status</option>
+        <option value="stackedbar">History</option>
+      </select>
+        </div>
+      </div>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card">
+              <div class="card-body" id="rchartdiv">
+                  <canvas id="rchart" width="800" height="400"></canvas>
+              </div>
+                <div class="card-body" id="dchartdiv">
+                    <canvas id="dchart" width="600" height="400"></canvas>
+                </div>
+                <div class="card-body" id="bchartdiv">
+                    <canvas id="bchart" width="600" height="400"></canvas>
+                </div>
+                <div class="card-body" id="schartdiv">
+                    <canvas id="schart" width="800" height="400"></canvas>
+                </div>
+                <div class="card-body" id="schartdiv">
+                    <canvas id="echart" width="800" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+     </div>
+</div>
+
+
+
+{% endblock %}
